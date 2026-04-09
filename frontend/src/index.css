@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  /* Premium SaaS Colors */
+  --color-jcs-bg: #FAFCFB;       /* Ultra-clean, cool off-white */
+  --color-jcs-deep: #092619;     /* A much deeper, richer slate-green */
+  --color-jcs-brand: #00D084;    /* Vibrant neon mint */
+  --color-jcs-brand-light: #00E59B; 
+  --color-jcs-text: #1E293B;     /* Slate-800 for softer, premium text */
+  
+  /* Diffuse, high-end shadows */
+  --shadow-saas: 0 20px 40px -15px rgba(9, 38, 25, 0.08);
+  --shadow-saas-hover: 0 30px 60px -15px rgba(9, 38, 25, 0.12);
+  --shadow-glow: 0 10px 40px -10px rgba(0, 208, 132, 0.5);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

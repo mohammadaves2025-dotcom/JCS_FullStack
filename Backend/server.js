@@ -19,9 +19,12 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-    credentials: true, // This allows the backend to accept the secure login cookie
+    origin: process.env.FRONTEND_URL, // e.g., 'https://jcs-full-stack-qaui.vercel.app'
+    credentials: true, 
 }));
+
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // <-- ADD THIS to read the secure cookies

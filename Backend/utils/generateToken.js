@@ -8,9 +8,9 @@ const generateToken = (res, userId) => {
   // 🚨 This is where it was crashing because 'res' was undefined
   res.cookie('jwt', token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'strict',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    secure: true,           // 🟢 REQUIRED for Vercel (forces HTTPS)
+    sameSite: 'none',       // 🟢 REQUIRED for Cross-Domain cookies
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
   });
 };
 

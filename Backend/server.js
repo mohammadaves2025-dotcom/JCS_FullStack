@@ -17,13 +17,33 @@ connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors({
-    origin: process.env.FRONTEND_URL, // e.g., 'https://jcs-full-stack-qaui.vercel.app'
-    credentials: true, 
-}));
+// ☢️ THE NUCLEAR CORS FIX: Must be the VERY FIRST thing in the app!
+app.use((req, res, next) => {
+    // 1. Hardcode your exact frontend URL
+    res.setHeader("Access-Control-Allow-Origin", "https://jcs-full-stack-qaui.vercel.app");
+    
+    // 2. Allow all required methods
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    
+    // 3. Allow headers and cookies
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
 
-app.options('*', cors());
+    // 4. Instantly return 200 OK for Preflight requests (Kills the "not HTTP ok status" error)
+    if (req.method === "OPTIONS") {
+        return res.status(200).end();
+    }
+
+    next();
+});
+
+// // Middleware
+// app.use(cors({
+//     origin: process.env.FRONTEND_URL, // e.g., 'https://jcs-full-stack-qaui.vercel.app'
+//     credentials: true, 
+// }));
+
+// app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

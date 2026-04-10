@@ -19,7 +19,7 @@ router.route("/")
 
 
 router.route("/:id")
-    .get(protect, protect, getClientById) // Both staff and the student themselves can see this
+    .get(protect, getClientById) // Both staff and the student themselves can see this
     .put(protect, superAdmin, updateClient);
 
 

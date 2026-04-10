@@ -4,9 +4,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 // @desc    Auth user & get token (Login)
-// @route   POST /api/users/auth
+// @route   POST /api/users/login
 // @access  Public
-// 🟢 Update your loginUser function inside authController.js
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -19,27 +18,26 @@ export const loginUser = async (req, res) => {
     const isMatch = await user.matchPassword(password);
 
     if (isMatch) {
-        // 1. Set the secure cookie
-        generateToken(res, user._id); 
+        // Set the secure cookie AND return the token in the response
+        // (Browser uses cookie for same-domain; frontend stores token for cross-domain Vercel)
+        const token = generateToken(res, user._id);
 
-        // 2. Send the JSON response WITHOUT the token key 
-        // (The browser handles the cookie automatically)
         res.json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role, 
+            role: user.role,
+            token, // <-- included so frontend can use Authorization: Bearer as fallback
         });
     } else {
         res.status(401).json({ message: "Invalid email or password" });
     }
 };
+
 // @desc    Register a new user (Admin or Student)
-// @route   POST /api/users
-// @access  Public (or restrict to Admin later)
-
+// @route   POST /api/users/register
+// @access  Public
 export const registerUser = async (req, res) => {
-
     const { name, email, password, role } = req.body;
 
     const userExists = await User.findOne({ email });
@@ -52,17 +50,18 @@ export const registerUser = async (req, res) => {
         name,
         email,
         password,
-        role: role || "student", // Defaults to student if not specified
+        role: role || "student",
     });
 
     if (user) {
-        generateToken(res, user._id);
+        const token = generateToken(res, user._id);
 
         res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
+            token,
         });
     } else {
         res.status(400).json({ message: "Invalid user data" });
@@ -75,6 +74,8 @@ export const registerUser = async (req, res) => {
 export const logoutUser = async (req, res) => {
     res.cookie("jwt", "", {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
         expires: new Date(0),
     });
     res.status(200).json({ message: "Logged out successfully" });

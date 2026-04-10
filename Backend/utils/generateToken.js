@@ -5,13 +5,17 @@ const generateToken = (res, userId) => {
     expiresIn: '30d',
   });
 
-  // 🚨 This is where it was crashing because 'res' was undefined
+  // Set secure cookie (works for same-domain)
   res.cookie('jwt', token, {
     httpOnly: true,
-    secure: true,           // 🟢 REQUIRED for Vercel (forces HTTPS)
-    sameSite: 'none',       // 🟢 REQUIRED for Cross-Domain cookies
-    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    secure: true,        // Required for HTTPS (Vercel)
+    sameSite: 'none',    // Required for cross-domain cookies
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
+
+  // Return token so the controller can send it in the JSON response
+  // (frontend stores it for Authorization: Bearer fallback)
+  return token;
 };
 
 export default generateToken;

@@ -34,7 +34,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'super-admin']}>
+              <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
                 <AdminLayout><Overview /></AdminLayout>
               </ProtectedRoute>
             }
@@ -42,7 +42,7 @@ function App() {
           <Route
             path="/admin/leads"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'super-admin']}>
+              <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
                 <AdminLayout><LeadPipeline /></AdminLayout>
               </ProtectedRoute>
             }
@@ -50,7 +50,7 @@ function App() {
           <Route
             path="/admin/clients"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'super-admin']}>
+              <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
                 <AdminLayout><ClientVault /></AdminLayout>
               </ProtectedRoute>
             }
@@ -58,7 +58,7 @@ function App() {
           <Route
             path="/admin/broadcast"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'super-admin']}>
+              <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
                 <AdminLayout><BroadcastEngine /></AdminLayout>
               </ProtectedRoute>
             }
@@ -66,7 +66,7 @@ function App() {
           <Route
             path="/admin/colleges"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'super-admin']}>
+              <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
                 <AdminLayout><CollegeInventory /></AdminLayout>
               </ProtectedRoute>
             }

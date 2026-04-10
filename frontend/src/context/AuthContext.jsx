@@ -8,21 +8,29 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const backendURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 
-    // Check if admin is already logged in when they refresh the page
+    // Restore session on page refresh
     useEffect(() => {
         const storedUser = localStorage.getItem('jcs_admin_info');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsed = JSON.parse(storedUser);
+            setUser(parsed);
+            // Re-attach Authorization header if token exists
+            if (parsed.token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${parsed.token}`;
+            }
         }
         setLoading(false);
     }, []);
 
     const loginAdmin = async (email, password) => {
         try {
-            // Points to the backend auth route we built
             const { data } = await axios.post(backendURL + '/api/users/login', { email, password });
             setUser(data);
             localStorage.setItem('jcs_admin_info', JSON.stringify(data));
+            // Set Bearer token globally for all subsequent axios requests
+            if (data.token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            }
             return { success: true };
         } catch (error) {
             return {
@@ -35,10 +43,12 @@ export const AuthProvider = ({ children }) => {
     const logoutAdmin = async () => {
         try {
             await axios.post(backendURL + '/api/users/logout');
-            setUser(null);
-            localStorage.removeItem('jcs_admin_info');
         } catch (error) {
             console.error('Logout error', error);
+        } finally {
+            setUser(null);
+            localStorage.removeItem('jcs_admin_info');
+            delete axios.defaults.headers.common['Authorization'];
         }
     };
 

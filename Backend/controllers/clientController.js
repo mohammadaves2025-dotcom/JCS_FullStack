@@ -84,13 +84,16 @@ export const updateClient = async (req, res) => {
         if (address !== undefined) client.address = address;
         if (requiredDocuments) client.requiredDocuments = requiredDocuments; // Admin can push ["Gap Certificate"] here!
 
-        // 4. Financial Updates
-        if (totalAgreedAmount !== undefined || amountPaid !== undefined) {
-            client.financials = {
-                totalAgreedAmount: totalAgreedAmount ?? client.financials.totalAgreedAmount,
-                amountPaid: amountPaid ?? client.financials.amountPaid,
-            };
+        //4. 🟢 FIXED Financial Updates
+        if (totalAgreedAmount !== undefined) {
+            client.financials.totalAgreedAmount = Number(totalAgreedAmount);
         }
+        if (amountPaid !== undefined) {
+            client.financials.amountPaid = Number(amountPaid);
+        }
+
+        // Tell Mongoose explicitly to track this nested object
+        client.markModified('financials');
 
         // 5. Document Updates
         if (documents) {
@@ -120,8 +123,8 @@ export const getDashboardStats = async (req, res) => {
             {
                 $group: {
                     _id: null,
-                    totalRevenue: { $sum: "$financials.totalAgreedAmount" },
-                    totalCollected: { $sum: "$financials.amountPaid" },
+                    totalRevenue: { $sum: { $ifNull: ["$financials.totalAgreedAmount", 0] } },
+                    totalCollected: { $sum: { $ifNull: ["$financials.amountPaid", 0] } },
                 },
             },
         ]);
@@ -149,10 +152,10 @@ export const getDashboardStats = async (req, res) => {
 export const getMyProfile = async (req, res) => {
     try {
         // 🟢 Added .trim() to kill accidental spaces
-        const cleanEmail = req.user.email.trim(); 
-        
-        const client = await Client.findOne({ 
-            email: { $regex: new RegExp("^" + cleanEmail + "$", "i") } 
+        const cleanEmail = req.user.email.trim();
+
+        const client = await Client.findOne({
+            email: { $regex: new RegExp("^" + cleanEmail + "$", "i") }
         });
 
         if (!client) {
@@ -176,12 +179,12 @@ export const updateMyDocuments = async (req, res) => {
 
     try {
         const client = await Client.findOne({ email: req.user.email });
-        
+
         if (!client) return res.status(404).json({ message: "Profile not found" });
 
         client.documents.push(document);
         const updatedClient = await client.save();
-        
+
         res.status(200).json(updatedClient);
     } catch (error) {
         res.status(500).json({ message: "Server error saving document" });

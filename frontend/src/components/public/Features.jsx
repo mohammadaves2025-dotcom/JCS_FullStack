@@ -1,11 +1,12 @@
 import React from 'react';
-import { FiMonitor, FiFileText, FiGlobe, FiUsers, FiBook, FiAward } from 'react-icons/fi';
+import { FiMonitor, FiFileText, FiGlobe, FiUsers, FiBook, FiAward ,FiArrowUpRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const Features = () => {
     return (
         <div className="py-24 bg-white relative z-20">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
-                
+
                 {/* TOP STATS */}
                 <div className="text-center mb-20">
                     <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mb-16">
@@ -27,32 +28,58 @@ const Features = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-10">
                         <div className="flex items-start gap-5 group cursor-pointer">
-                            <div className="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300"><FiMonitor size={24}/></div>
+                            <div className="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center shrink-0 border border-blue-100 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300"><FiMonitor size={24} /></div>
                             <div><h4 className="font-bold text-gray-900 text-lg mb-1">Find the Right Program</h4><p className="text-sm text-gray-500 font-medium">Data-driven shortlisting based on your academic profile.</p></div>
                         </div>
                         <div className="flex items-start gap-5 group cursor-pointer">
-                            <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center shrink-0 border border-purple-100 group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300"><FiFileText size={24}/></div>
+                            <div className="w-14 h-14 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center shrink-0 border border-purple-100 group-hover:bg-purple-500 group-hover:text-white transition-colors duration-300"><FiFileText size={24} /></div>
                             <div><h4 className="font-bold text-gray-900 text-lg mb-1">Expert Application Support</h4><p className="text-sm text-gray-500 font-medium">We handle the paperwork, tracking, and seat booking.</p></div>
                         </div>
                         <div className="flex items-start gap-5 group cursor-pointer">
-                            <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shrink-0 border border-green-100 group-hover:bg-green-500 group-hover:text-white transition-colors duration-300"><FiAward size={24}/></div>
+                            <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center shrink-0 border border-green-100 group-hover:bg-green-500 group-hover:text-white transition-colors duration-300"><FiAward size={24} /></div>
                             <div><h4 className="font-bold text-gray-900 text-lg mb-1">Financial Transparency</h4><p className="text-sm text-gray-500 font-medium">No hidden fees. Secure ledger tracking in your portal.</p></div>
                         </div>
                         <div className="flex items-start gap-5 group cursor-pointer">
-                            <div className="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center shrink-0 border border-orange-100 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300"><FiUsers size={24}/></div>
+                            <div className="w-14 h-14 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center shrink-0 border border-orange-100 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300"><FiUsers size={24} /></div>
                             <div><h4 className="font-bold text-gray-900 text-lg mb-1">Specialist Counselors</h4><p className="text-sm text-gray-500 font-medium">Dedicated experts for Medical, Engineering & Law.</p></div>
                         </div>
                         <div className="flex items-start gap-5 group cursor-pointer">
-                            <div className="w-14 h-14 bg-jcs-brand/10 text-jcs-deep rounded-2xl flex items-center justify-center shrink-0 border border-jcs-brand/20 group-hover:bg-jcs-deep group-hover:text-white transition-colors duration-300"><FiBook size={24}/></div>
+                            <div className="w-14 h-14 bg-jcs-brand/10 text-jcs-deep rounded-2xl flex items-center justify-center shrink-0 border border-jcs-brand/20 group-hover:bg-jcs-deep group-hover:text-white transition-colors duration-300"><FiBook size={24} /></div>
                             <div><h4 className="font-bold text-gray-900 text-lg mb-1">Top-Tier Network</h4><p className="text-sm text-gray-500 font-medium">Direct tie-ups with premium institutions across India.</p></div>
                         </div>
                         <div className="flex items-start gap-5 group cursor-pointer">
-                            <div className="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center shrink-0 border border-red-100 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300"><FiGlobe size={24}/></div>
+                            <div className="w-14 h-14 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center shrink-0 border border-red-100 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300"><FiGlobe size={24} /></div>
                             <div><h4 className="font-bold text-gray-900 text-lg mb-1">Student Tracking Portal</h4><p className="text-sm text-gray-500 font-medium">Track your admission status live in your dedicated portal.</p></div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <section className="py-12 px-6 bg-white">
+                <div className="max-w-7xl mx-auto">
+                    <div className="bg-jcs-deep rounded-[3rem] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
+                        {/* Background Glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-jcs-brand opacity-10 rounded-full blur-3xl"></div>
+
+                        <div className="relative z-10">
+                            <span className="text-jcs-brand font-black text-xs uppercase tracking-[0.2em] mb-3 block">New Service</span>
+                            <h2 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+                                Want to study <span className="text-jcs-brand">MBBS Abroad?</span>
+                            </h2>
+                            <p className="text-white/70 font-medium max-w-md">
+                                Low tuition fees, direct admissions, and MCI-approved universities in Georgia, Russia, and more.
+                            </p>
+                        </div>
+
+                        <Link
+                            to="/mbbs-abroad"
+                            className="relative z-10 bg-jcs-brand text-gray-900 font-black px-8 py-4 rounded-2xl hover:bg-white hover:scale-105 transition-all shadow-lg flex items-center gap-2"
+                        >
+                            Explore Medical Programs <FiArrowUpRight />
+                        </Link>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };

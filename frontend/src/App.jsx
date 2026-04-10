@@ -17,6 +17,8 @@ import ClientVault from './pages/ClientVault';
 import BroadcastEngine from './pages/BroadcastEngine';
 import CollegeInventory from './pages/CollegeInventory';
 import StudentPortal from './pages/StudentPortal';
+import MBBS from './pages/MBBS.jsx';
+import PublicLayout from './components/public/PublicLayout.jsx';
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -81,6 +83,12 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/mbbs-abroad"
+            element={<MBBS />}
+          />
+
         </Routes>
       </LeadProvider>
     </AuthProvider>

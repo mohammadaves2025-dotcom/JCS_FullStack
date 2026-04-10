@@ -33,6 +33,13 @@ const PublicLayout = ({ children }) => {
 
                     <div className="flex items-center gap-4">
                         {/* Discrete Portal Link for students/staff */}
+                        
+                        <NavLink
+                            to="/mbbs-abroad"
+                            className="text-gray-700 hover:text-jcs-brand font-bold transition-colors"
+                        >
+                            MBBS Abroad
+                        </NavLink>
                         <NavLink
                             to="/login"
                             className={({ isActive }) => `text-sm font-bold transition-colors ${scrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}

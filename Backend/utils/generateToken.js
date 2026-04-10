@@ -1,21 +1,25 @@
 import jwt from 'jsonwebtoken';
 
 const generateToken = (res, userId) => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
-  });
+    // ✅ Guard: crash loudly if JWT_SECRET is missing rather than issuing an insecure token
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET environment variable is not defined.");
+    }
 
-  // Set secure cookie (works for same-domain)
-  res.cookie('jwt', token, {
-    httpOnly: true,
-    secure: true,        // Required for HTTPS (Vercel)
-    sameSite: 'none',    // Required for cross-domain cookies
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-  });
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+        expiresIn: '30d',
+    });
 
-  // Return token so the controller can send it in the JSON response
-  // (frontend stores it for Authorization: Bearer fallback)
-  return token;
+    // Set secure cookie (same-domain)
+    res.cookie('jwt', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development', // ✅ Allow non-HTTPS in local dev
+        sameSite: process.env.NODE_ENV !== 'development' ? 'none' : 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
+    // Return token so controller can send it as Bearer fallback
+    return token;
 };
 
 export default generateToken;

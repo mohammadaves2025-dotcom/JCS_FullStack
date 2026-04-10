@@ -10,24 +10,38 @@ export const AuthProvider = ({ children }) => {
 
     // Restore session on page refresh
     useEffect(() => {
-        const storedUser = localStorage.getItem('jcs_admin_info');
-        if (storedUser) {
-            const parsed = JSON.parse(storedUser);
-            setUser(parsed);
-            // Re-attach Authorization header if token exists
-            if (parsed.token) {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${parsed.token}`;
+        try {
+            const storedUser = localStorage.getItem('jcs_admin_info');
+            if (storedUser) {
+                // ✅ Wrapped in try/catch — corrupted localStorage won't crash the app
+                const parsed = JSON.parse(storedUser);
+                if (parsed && parsed._id && parsed.role) {
+                    setUser(parsed);
+                    if (parsed.token) {
+                        axios.defaults.headers.common['Authorization'] = `Bearer ${parsed.token}`;
+                    }
+                } else {
+                    // Data is malformed — clear it
+                    localStorage.removeItem('jcs_admin_info');
+                }
             }
+        } catch (err) {
+            console.warn('Failed to restore session from localStorage. Clearing.', err);
+            localStorage.removeItem('jcs_admin_info');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
 
     const loginAdmin = async (email, password) => {
         try {
-            const { data } = await axios.post(backendURL + '/api/users/login', { email, password });
+            const { data } = await axios.post(
+                backendURL + '/api/users/login',
+                { email: email.trim().toLowerCase(), password },
+                { withCredentials: true }
+            );
             setUser(data);
             localStorage.setItem('jcs_admin_info', JSON.stringify(data));
-            // Set Bearer token globally for all subsequent axios requests
             if (data.token) {
                 axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
             }
@@ -35,14 +49,14 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             return {
                 success: false,
-                message: error.response?.data?.message || 'Login failed'
+                message: error.response?.data?.message || 'Login failed. Please try again.',
             };
         }
     };
 
     const logoutAdmin = async () => {
         try {
-            await axios.post(backendURL + '/api/users/logout');
+            await axios.post(backendURL + '/api/users/logout', {}, { withCredentials: true });
         } catch (error) {
             console.error('Logout error', error);
         } finally {

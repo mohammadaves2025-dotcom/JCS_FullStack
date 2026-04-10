@@ -1,25 +1,30 @@
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
 // @desc    Auth user & get token (Login)
 // @route   POST /api/users/login
 // @access  Public
 export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
+        }
 
-    if (!user) {
-        return res.status(401).json({ message: "Invalid email or password" });
-    }
+        // ✅ Normalize email on login to match normalized email stored at registration
+        const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    const isMatch = await user.matchPassword(password);
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
 
-    if (isMatch) {
-        // Set the secure cookie AND return the token in the response
-        // (Browser uses cookie for same-domain; frontend stores token for cross-domain Vercel)
+        const isMatch = await user.matchPassword(password);
+
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid email or password" });
+        }
+
         const token = generateToken(res, user._id);
 
         res.json({
@@ -27,10 +32,11 @@ export const loginUser = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            token, // <-- included so frontend can use Authorization: Bearer as fallback
+            token, // Included for Authorization: Bearer fallback on cross-domain Vercel
         });
-    } else {
-        res.status(401).json({ message: "Invalid email or password" });
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ message: "Server error during login" });
     }
 };
 
@@ -38,22 +44,29 @@ export const loginUser = async (req, res) => {
 // @route   POST /api/users/register
 // @access  Public
 export const registerUser = async (req, res) => {
-    const { name, email, password, role } = req.body;
+    try {
+        const { name, email, password, role } = req.body;
 
-    const userExists = await User.findOne({ email });
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "Name, email, and password are required" });
+        }
 
-    if (userExists) {
-        return res.status(400).json({ message: "User already exists" });
-    }
+        // ✅ Normalize email on save so login always finds it
+        const normalizedEmail = email.toLowerCase().trim();
 
-    const user = await User.create({
-        name,
-        email,
-        password,
-        role: role || "student",
-    });
+        const userExists = await User.findOne({ email: normalizedEmail });
+        if (userExists) {
+            return res.status(400).json({ message: "User already exists" });
+        }
 
-    if (user) {
+        // ✅ Pass plain password — User model's pre('save') hook hashes it automatically
+        const user = await User.create({
+            name: name.trim(),
+            email: normalizedEmail,
+            password,
+            role: role || "student",
+        });
+
         const token = generateToken(res, user._id);
 
         res.status(201).json({
@@ -63,8 +76,9 @@ export const registerUser = async (req, res) => {
             role: user.role,
             token,
         });
-    } else {
-        res.status(400).json({ message: "Invalid user data" });
+    } catch (error) {
+        console.error("Register error:", error);
+        res.status(500).json({ message: "Server error during registration" });
     }
 };
 
@@ -72,33 +86,52 @@ export const registerUser = async (req, res) => {
 // @route   POST /api/users/logout
 // @access  Public
 export const logoutUser = async (req, res) => {
-    res.cookie("jwt", "", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        expires: new Date(0),
-    });
-    res.status(200).json({ message: "Logged out successfully" });
+    try {
+        res.cookie("jwt", "", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            expires: new Date(0),
+        });
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({ message: "Server error during logout" });
+    }
 };
 
+// @desc    Register a staff member (counselor etc.)
+// @route   POST /api/users/register-staff
+// @access  Super Admin only
 export const registerStaff = async (req, res) => {
-    const { name, email, password, role } = req.body;
+    try {
+        const { name, email, password, role } = req.body;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-        return res.status(400).json({ message: "User already exists" });
-    }
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "Name, email, and password are required" });
+        }
 
-    const user = await User.create({
-        name,
-        email,
-        password,
-        role: role || "counselor",
-    });
+        const normalizedEmail = email.toLowerCase().trim();
 
-    if (user) {
-        res.status(201).json({ message: "Staff member created successfully", user: { name: user.name, role: user.role } });
-    } else {
-        res.status(400).json({ message: "Invalid user data" });
+        const userExists = await User.findOne({ email: normalizedEmail });
+        if (userExists) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        // ✅ Pass plain password — pre('save') hook hashes it automatically
+        const user = await User.create({
+            name: name.trim(),
+            email: normalizedEmail,
+            password,
+            role: role || "counselor",
+        });
+
+        res.status(201).json({
+            message: "Staff member created successfully",
+            user: { name: user.name, email: user.email, role: user.role },
+        });
+    } catch (error) {
+        console.error("Register staff error:", error);
+        res.status(500).json({ message: "Server error while creating staff" });
     }
 };

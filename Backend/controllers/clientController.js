@@ -84,7 +84,13 @@ export const updateClient = async (req, res) => {
         if (address !== undefined) client.address = address;
         if (requiredDocuments) client.requiredDocuments = requiredDocuments; // Admin can push ["Gap Certificate"] here!
 
-        //4. 🟢 FIXED Financial Updates
+        // 4. 🟢 FIXED Financial Updates (Crash-Proofed)
+
+        // Safety net: If the client document lacks a financials object, create an empty one first
+        if (!client.financials) {
+            client.financials = { totalAgreedAmount: 0, amountPaid: 0 };
+        }
+
         if (totalAgreedAmount !== undefined) {
             client.financials.totalAgreedAmount = Number(totalAgreedAmount);
         }

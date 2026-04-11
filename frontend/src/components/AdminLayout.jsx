@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Navigate, Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { FiHome, FiUsers, FiFolder, FiLogOut, FiSettings, FiRadio, FiMenu, FiX } from 'react-icons/fi';
+import { FiHome, FiUsers, FiFolder, FiLogOut, FiSettings, FiRadio, FiMenu, FiX , FiArchive} from 'react-icons/fi';
 
 const AdminLayout = ({ children }) => {
     const { user, logoutAdmin, loading } = useContext(AuthContext);
@@ -24,6 +24,7 @@ const AdminLayout = ({ children }) => {
         { name: 'Client Vault', path: '/admin/clients', icon: FiFolder },
         { name: 'Broadcast', path: '/admin/broadcast', icon: FiRadio },
         { name: 'Inventory', path: '/admin/colleges', icon: FiSettings },
+        { name: 'Archives', path: '/admin/archive', icon: FiArchive },
     ];
 
     return (

@@ -1,19 +1,23 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
-import { FiFolder, FiDollarSign, FiUploadCloud, FiFileText, FiCheckCircle, FiX, FiExternalLink, FiCamera, FiTarget, FiBookOpen, FiUser, FiPhone, FiMail } from 'react-icons/fi';
+// 🟢 Added FiHeart for the new Medical Profile section
+import { FiFolder, FiDollarSign, FiUploadCloud, FiFileText, FiCheckCircle, FiX, FiExternalLink, FiCamera, FiTarget, FiBookOpen, FiUser, FiPhone, FiMail, FiHeart } from 'react-icons/fi';
 
 const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     const { user } = useContext(AuthContext);
-    
+
     const [uploadingDoc, setUploadingDoc] = useState(false);
     const [customDocName, setCustomDocName] = useState('');
-    
+
     // Editable States
     const [editFinancials, setEditFinancials] = useState({ totalAgreedAmount: 0, amountPaid: 0 });
     const [editColleges, setEditColleges] = useState('');
     const [editCourse, setEditCourse] = useState('');
     const [admissionStatus, setAdmissionStatus] = useState('');
+
+    // 🟢 NEW: Blood Group State
+    const [editBloodGroup, setEditBloodGroup] = useState('');
 
     useEffect(() => {
         if (client) {
@@ -24,13 +28,16 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
             setEditColleges(client.targetColleges?.join(', ') || '');
             setEditCourse(client.targetCourse || '');
             setAdmissionStatus(client.admissionStatus || 'Documents Pending');
+
+            // 🟢 Sync Blood Group from database
+            setEditBloodGroup(client.bloodGroup || '');
         }
     }, [client]);
 
     const saveClientDetails = async (updates, silent = false) => {
         try {
             await axios.put(`/api/clients/${client._id}`, updates, { withCredentials: true });
-            refreshClients(); 
+            refreshClients();
             if (!silent) alert("Profile updated successfully!");
         } catch (error) {
             alert("Failed to update client profile.");
@@ -61,9 +68,9 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                 const finalDocName = docType === 'Custom' ? customDocName : docType;
                 const newDoc = { docType: finalDocName, url: uploadRes.data.url, public_id: uploadRes.data.public_id };
                 const updatedDocs = [...(client.documents || []), newDoc];
-                
+
                 await saveClientDetails({ documents: updatedDocs }, true);
-                setCustomDocName(''); 
+                setCustomDocName('');
             }
         } catch (error) {
             console.error(error);
@@ -76,7 +83,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-gray-900/70 backdrop-blur-sm">
             <div className="bg-gray-50 rounded-[2rem] w-full max-w-7xl h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-fade-in-up border border-white/20">
-                
+
                 {/* 🟢 Premium Header */}
                 <div className="px-8 py-6 bg-white border-b border-gray-200 flex justify-between items-center shrink-0">
                     <div className="flex items-center gap-6">
@@ -97,22 +104,21 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                         <div>
                             <h2 className="text-2xl font-black text-gray-900 tracking-tight">{client.name}</h2>
                             <div className="flex gap-4 mt-1 text-sm font-semibold text-gray-500">
-                                <span className="flex items-center gap-1.5"><FiPhone className="text-gray-400"/> {client.phone}</span>
-                                {client.email && <span className="flex items-center gap-1.5"><FiMail className="text-gray-400"/> {client.email}</span>}
+                                <span className="flex items-center gap-1.5"><FiPhone className="text-gray-400" /> {client.phone}</span>
+                                {client.email && <span className="flex items-center gap-1.5"><FiMail className="text-gray-400" /> {client.email}</span>}
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4">
-                        <select 
-                            value={admissionStatus} 
+                        <select
+                            value={admissionStatus}
                             onChange={(e) => {
                                 setAdmissionStatus(e.target.value);
                                 saveClientDetails({ admissionStatus: e.target.value }, true);
                             }}
-                            className={`px-4 py-2.5 rounded-xl font-bold text-sm border-0 shadow-sm cursor-pointer focus:ring-4 focus:ring-jcs-brand/20 transition-all ${
-                                admissionStatus === 'Seat Confirmed' ? 'bg-green-100 text-green-700' : 'bg-white text-gray-700 border border-gray-200'
-                            }`}
+                            className={`px-4 py-2.5 rounded-xl font-bold text-sm border-0 shadow-sm cursor-pointer focus:ring-4 focus:ring-jcs-brand/20 transition-all ${admissionStatus === 'Seat Confirmed' ? 'bg-green-100 text-green-700' : 'bg-white text-gray-700 border border-gray-200'
+                                }`}
                         >
                             <option>Documents Pending</option>
                             <option>Documents Verified</option>
@@ -128,18 +134,54 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                 {/* 🟢 Body Grid */}
                 <div className="flex-1 overflow-y-auto p-8 hide-scrollbar">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
-                        
-                        {/* COLUMN 1: Academic Profile */}
+
+                        {/* COLUMN 1: Academic & Personal Profile */}
                         <div className="space-y-6">
+
+                            {/* 🟢 NEW: Medical / Personal Profile Card */}
+                            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                    <FiHeart className="text-red-400" /> Medical Profile
+                                </h3>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Blood Group</label>
+                                    <div className="flex gap-2">
+                                        <select
+                                            value={editBloodGroup}
+                                            onChange={(e) => setEditBloodGroup(e.target.value)}
+                                            className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand text-gray-900 cursor-pointer"
+                                        >
+                                            <option value="">Select Blood Group...</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                        </select>
+                                        <button
+                                            onClick={() => saveClientDetails({ bloodGroup: editBloodGroup })}
+                                            className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Existing Academic Targets Card */}
                             <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2"><FiBookOpen /> Academic Targets</h3>
-                                
+
                                 {/* Opted Course */}
                                 <div className="mb-6">
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Opted Course</label>
                                     <div className="flex gap-2">
-                                        <input 
-                                            type="text" value={editCourse} onChange={(e) => setEditCourse(e.target.value)} placeholder="e.g. B.Tech CSE"
+                                        <input
+                                            type="text" value={editCourse} onChange={(e) => setEditCourse(e.target.value)} placeholder="e.g. MBBS Abroad"
                                             className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand"
                                         />
                                         <button onClick={() => saveClientDetails({ targetCourse: editCourse })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm">Save</button>
@@ -150,8 +192,8 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 <div>
                                     <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Target Colleges (Comma Separated)</label>
                                     <div className="flex gap-2">
-                                        <input 
-                                            type="text" value={editColleges} onChange={(e) => setEditColleges(e.target.value)} placeholder="e.g. Amity, Sharda"
+                                        <input
+                                            type="text" value={editColleges} onChange={(e) => setEditColleges(e.target.value)} placeholder="e.g. Tbilisi State University"
                                             className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand"
                                         />
                                         <button onClick={() => saveClientDetails({ targetColleges: editColleges.split(',').map(c => c.trim()) })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm">Save</button>
@@ -169,24 +211,30 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-jcs-brand/5 rounded-full blur-2xl"></div>
                                     <h3 className="text-xs font-black text-jcs-deep uppercase tracking-widest mb-5 flex items-center gap-2 relative z-10"><FiDollarSign /> Financial Ledger</h3>
-                                    
+
                                     <div className="space-y-4 mb-5 relative z-10">
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Total Agreed Fee (₹)</label>
-                                            <input type="number" value={editFinancials.totalAgreedAmount} onChange={(e) => setEditFinancials({...editFinancials, totalAgreedAmount: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-black text-gray-900" />
+                                            <input type="number" value={editFinancials.totalAgreedAmount} onChange={(e) => setEditFinancials({ ...editFinancials, totalAgreedAmount: e.target.value })} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-black text-gray-900" />
                                         </div>
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Amount Collected (₹)</label>
-                                            <input type="number" value={editFinancials.amountPaid} onChange={(e) => setEditFinancials({...editFinancials, amountPaid: e.target.value})} className="w-full p-3 rounded-xl bg-green-50 border border-green-200 font-black text-green-700" />
+                                            <input type="number" value={editFinancials.amountPaid} onChange={(e) => setEditFinancials({ ...editFinancials, amountPaid: e.target.value })} className="w-full p-3 rounded-xl bg-green-50 border border-green-200 font-black text-green-700" />
                                         </div>
                                     </div>
-                                    
+
                                     <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100 relative z-10 mb-4">
                                         <span className="text-xs font-bold text-gray-500">Balance Due:</span>
                                         <span className="text-lg font-black text-red-500">₹{(editFinancials.totalAgreedAmount - editFinancials.amountPaid).toLocaleString('en-IN')}</span>
                                     </div>
 
-                                    <button onClick={() => saveClientDetails({ financials: editFinancials })} className="w-full bg-jcs-deep text-white font-extrabold py-3 rounded-xl shadow-md hover:bg-gray-900 transition-colors relative z-10">
+                                    <button
+                                        onClick={() => saveClientDetails({
+                                            totalAgreedAmount: editFinancials.totalAgreedAmount,
+                                            amountPaid: editFinancials.amountPaid
+                                        })}
+                                        className="w-full bg-jcs-deep text-white font-extrabold py-3 rounded-xl shadow-md hover:bg-gray-900 transition-colors relative z-10"
+                                    >
                                         Update Ledger
                                     </button>
                                 </div>
@@ -199,7 +247,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><FiFolder /> Document Vault</h3>
                                 {uploadingDoc && <span className="text-[10px] font-black text-jcs-brand animate-pulse bg-jcs-brand/10 px-3 py-1.5 rounded-full uppercase">Encrypting & Uploading...</span>}
                             </div>
-                            
+
                             <div className="flex-1 overflow-y-auto pr-2 hide-scrollbar">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Uploaded Documents */}
@@ -210,7 +258,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                                 <span className="font-bold text-sm text-gray-900 truncate max-w-[120px]" title={doc.docType}>{doc.docType}</span>
                                             </div>
                                             <a href={doc.url} target="_blank" rel="noreferrer" className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-white px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-50 transition-colors flex items-center gap-1.5">
-                                                Open <FiExternalLink size={12}/>
+                                                Open <FiExternalLink size={12} />
                                             </a>
                                         </div>
                                     ))}
@@ -235,10 +283,10 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                             <div className="mt-6 pt-5 border-t border-gray-100 bg-gray-50 p-4 rounded-2xl">
                                 <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Upload Additional Document</h4>
                                 <div className="flex gap-3">
-                                    <input 
-                                        type="text" value={customDocName} onChange={(e) => setCustomDocName(e.target.value)} 
-                                        placeholder="e.g. Migration Certificate" 
-                                        className="flex-1 p-3 rounded-xl bg-white border border-gray-200 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-jcs-brand/20" 
+                                    <input
+                                        type="text" value={customDocName} onChange={(e) => setCustomDocName(e.target.value)}
+                                        placeholder="e.g. Migration Certificate"
+                                        className="flex-1 p-3 rounded-xl bg-white border border-gray-200 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-jcs-brand/20"
                                     />
                                     <label className={`cursor-pointer flex items-center justify-center gap-2 px-5 rounded-xl font-bold text-sm transition-all ${customDocName ? 'bg-gray-900 text-white hover:bg-jcs-brand shadow-md' : 'bg-gray-200 text-gray-400 pointer-events-none'}`}>
                                         <FiUploadCloud size={16} /> Browse

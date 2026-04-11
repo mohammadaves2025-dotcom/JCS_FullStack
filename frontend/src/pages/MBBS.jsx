@@ -40,48 +40,54 @@ const MBBS = () => {
     return (
         <div className="bg-white min-h-screen pt-20">
 
-            {/* 🟢 Permanent Transparent Emerald Navbar */}
-<nav className="fixed w-full top-0 z-50 py-4 transition-all duration-300 bg-white backdrop-blur-sm">
-    <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
+            {/* 🟢 Upgraded Premium Navbar (Mobile Optimized & Scroll-Aware) */}
+            <nav className={`fixed w-full top-0 z-50 transition-all duration-500 py-3 ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'
+                }`}>
+                <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
 
-        {/* Logo Area */}
-        <div className="flex items-center gap-3 group">
-            <div className="w-11 h-11 bg-jcs-brand rounded-xl flex items-center justify-center font-black text-gray-900 text-sm shadow-[0_0_20px_rgba(0,208,132,0.4)] transition-transform group-hover:scale-110">
-                JCS
-            </div>
-            <div className="flex flex-col">
-                <span className="font-black text-sm md:text-lg tracking-tight text-black drop-shadow-md">
-                    JAMIA CONSULTANCY
-                </span>
-                <span className="text-[10px] font-bold tracking-widest uppercase text-jcs-brand drop-shadow-sm">
-                    Admissions • 2026
-                </span>
-            </div>
-        </div>
+                    {/* Logo Area */}
+                    <div className="flex items-center gap-2.5 md:gap-3 group cursor-pointer">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-jcs-deep to-[#13422E] rounded-lg md:rounded-xl flex items-center justify-center font-black text-white text-xs md:text-base shadow-[0_0_15px_rgba(0,208,132,0.3)] group-hover:scale-105 transition-transform duration-300">
+                            JCS
+                        </div>
+                        <div className="flex flex-col justify-center">
+                            <span className={`font-extrabold text-[13px] sm:text-[15px] md:text-lg leading-none tracking-tight transition-colors duration-300 ${scrolled ? 'text-gray-900' : 'text-shadow-black drop-shadow-md'}`}>
+                                JAMIA CONSULTANCY
+                            </span>
+                            <span className={`text-[8.5px] md:text-[10px] font-bold tracking-widest uppercase mt-1 transition-colors duration-300 ${scrolled ? 'text-jcs-brand' : 'text-jcs-brand drop-shadow-sm'}`}>
+                                Admissions • 2026
+                            </span>
+                        </div>
+                    </div>
 
-        <div className="flex items-center gap-6">
-            <NavLink
-                to="/mbbs-abroad"
-                className="text-sm font-black tracking-wide text-jcs-brand hover:text-white transition-all drop-shadow-[0_0_8px_rgba(0,208,132,0.5)]"
-            >
-                MBBS ABROAD
-            </NavLink>
+                    {/* Links Area */}
+                    <div className="flex items-center gap-3.5 md:gap-6">
+                        <NavLink
+                            to="/mbbs-abroad"
+                            className={`text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-all uppercase ${scrolled ? 'text-gray-700 hover:text-jcs-brand' : 'text-jcs-brand drop-shadow-[0_0_8px_rgba(0,208,132,0.6)] hover:text-white'
+                                }`}
+                        >
+                            MBBS Abroad
+                        </NavLink>
 
-            <NavLink
-                to="/login"
-                className="text-sm font-bold text-white/80 hover:text-white transition-colors"
-            >
-                Portal
-            </NavLink>
+                        <NavLink
+                            to="/login"
+                            className={`text-[11px] sm:text-xs md:text-sm font-bold transition-colors ${scrolled ? 'text-gray-500 hover:text-gray-900' : 'text-gray-500 hover:text-jcs-brand'
+                                }`}
+                        >
+                            Portal
+                        </NavLink>
 
-            <a href="tel:+919990922119" 
-               className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest bg-jcs-brand text-gray-900 shadow-[0_0_20px_rgba(0,208,132,0.3)] hover:bg-white transition-all"
-            >
-                <FiPhone /> Contact
-            </a>
-        </div>
-    </div>
-</nav>
+                        {/* Desktop Only Contact Button */}
+                        <a href="tel:+919990922119"
+                            className={`hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-300 ${scrolled ? 'bg-jcs-deep text-white shadow-md hover:bg-gray-900' : 'bg-jcs-brand text-gray-900 shadow-[0_0_15px_rgba(0,208,132,0.4)] hover:bg-white hover:shadow-none'
+                                }`}
+                        >
+                            <FiPhone size={16} /> Contact
+                        </a>
+                    </div>
+                </div>
+            </nav>
 
 
             {/* Hero Section */}
@@ -175,71 +181,131 @@ const MBBS = () => {
                 </div>
             </section>
 
-            {/* 🟢 NEW: Lead Generation Form Section */}
-            <section className="py-24 bg-gray-50 px-6">
+            {/* 🟢 Upgraded Lead Generation Form Section */}
+            <section className="py-24 bg-gray-50 px-6 relative">
                 <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
 
-                    {/* Left Side: Text */}
+                    {/* Left Side: Text & Value Prop */}
                     <div className="lg:w-1/2">
                         <span className="text-jcs-brand font-black text-xs uppercase tracking-widest mb-4 block">Get Started Today</span>
                         <h2 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-6">
                             Request a <span className="text-jcs-brand">Personalized</span> Admission Plan
                         </h2>
                         <p className="text-gray-500 font-medium text-lg mb-8">
-                            Fill out the form and our senior counselor will reach out within 24 hours to discuss your eligibility, budget, and university options.
+                            Fill out the form and our senior medical counselor will reach out within 24 hours to discuss your eligibility, budget, and top university options.
                         </p>
 
                         <div className="space-y-4">
-                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                                <div className="w-10 h-10 bg-jcs-brand/10 text-jcs-brand rounded-full flex items-center justify-center"><FiMapPin /></div>
-                                <span className="font-bold text-gray-700">Sector 18, Noida, Delhi NCR</span>
+                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-12 h-12 bg-jcs-brand/10 text-jcs-brand rounded-full flex items-center justify-center shrink-0">
+                                    <FiMapPin size={20} />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Head Office</span>
+                                    <span className="font-bold text-gray-900">Sector 18, Noida, Delhi NCR</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-12 h-12 bg-jcs-deep/10 text-jcs-deep rounded-full flex items-center justify-center shrink-0">
+                                    <FiCheckCircle size={20} />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Our Promise</span>
+                                    <span className="font-bold text-gray-900">100% Transparent Process</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Side: The Form */}
                     <div className="lg:w-1/2 w-full">
-                        <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl border border-white relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-jcs-brand opacity-5 rounded-full blur-2xl"></div>
+                        <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-gray-100 relative overflow-hidden">
+                            {/* Decorative Glow */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-jcs-brand opacity-[0.03] rounded-full blur-3xl pointer-events-none"></div>
 
                             <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <div className="relative">
-                                        <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                                        <input type="text" name="name" placeholder="Full Name" required value={formData.name} onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white outline-none transition-all font-medium" />
+                                    <div className="relative group">
+                                        <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-jcs-brand transition-colors" />
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            placeholder="Student Name"
+                                            required
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white focus:ring-4 focus:ring-jcs-brand/10 outline-none transition-all font-medium text-gray-900 placeholder-gray-400"
+                                        />
                                     </div>
-                                    <div className="relative">
-                                        <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                                        <input type="tel" name="phone" placeholder="Mobile Number" required value={formData.phone} onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white outline-none transition-all font-medium" />
+                                    <div className="relative group">
+                                        <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-jcs-brand transition-colors" />
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            placeholder="Mobile Number"
+                                            required
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white focus:ring-4 focus:ring-jcs-brand/10 outline-none transition-all font-medium text-gray-900 placeholder-gray-400"
+                                        />
                                     </div>
                                 </div>
 
-                                <div className="relative">
-                                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                                    <input type="email" name="email" placeholder="Email Address" required value={formData.email} onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white outline-none transition-all font-medium" />
+                                <div className="relative group">
+                                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-jcs-brand transition-colors" />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Email Address"
+                                        required
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white focus:ring-4 focus:ring-jcs-brand/10 outline-none transition-all font-medium text-gray-900 placeholder-gray-400"
+                                    />
                                 </div>
 
-                                <div className="relative">
-                                    <select name="message" value={formData.message} onChange={handleChange} required
-                                        className="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white outline-none transition-all font-medium appearance-none">
-                                        <option value="">Preferred Country</option>
-                                        <option value="Russia">Russia</option>
-                                        <option value="Georgia">Georgia</option>
-                                        <option value="Kazakhstan">Kazakhstan</option>
-                                        <option value="Uzbekistan">Uzbekistan</option>
+                                <div className="relative group">
+                                    <FiGlobe className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-jcs-brand transition-colors z-10" />
+                                    <select
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full pl-12 pr-10 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-jcs-brand focus:bg-white focus:ring-4 focus:ring-jcs-brand/10 outline-none transition-all font-medium appearance-none text-gray-900 cursor-pointer"
+                                    >
+                                        <option value="" disabled>Select Target Destination</option>
+                                        <option value="Russia">Russia (15-25 Lakhs)</option>
+                                        <option value="Georgia">Georgia (25-35 Lakhs)</option>
+                                        <option value="Kazakhstan">Kazakhstan (12-18 Lakhs)</option>
+                                        <option value="Uzbekistan">Uzbekistan (14-20 Lakhs)</option>
+                                        <option value="Not Sure Yet">Not Sure Yet - Need Counseling</option>
                                     </select>
+                                    {/* Custom Dropdown Arrow */}
+                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
                                 </div>
 
-                                <button type="submit" disabled={loading}
-                                    className="w-full bg-jcs-deep text-white font-black py-5 rounded-2xl hover:bg-jcs-brand hover:text-gray-900 transition-all shadow-lg flex items-center justify-center gap-2 group">
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-jcs-deep text-white font-black py-4 rounded-2xl hover:bg-jcs-brand hover:text-gray-900 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,208,132,0.3)] transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                                >
                                     {loading ? 'Processing...' : <>Submit Application <FiSend className="group-hover:translate-x-1 transition-transform" /></>}
                                 </button>
 
-                                {successMsg && <p className="text-jcs-brand font-bold text-center mt-4 animate-bounce">{successMsg}</p>}
-                                {errorMsg && <p className="text-red-500 font-bold text-center mt-4">{errorMsg}</p>}
+                                {/* Refined Feedback Messages */}
+                                {successMsg && (
+                                    <div className="bg-green-50 text-green-700 p-4 rounded-xl border border-green-100 flex items-center gap-3 animate-fade-in-up">
+                                        <FiCheckCircle className="shrink-0 text-green-500" />
+                                        <p className="text-sm font-bold">{successMsg}</p>
+                                    </div>
+                                )}
+                                {errorMsg && (
+                                    <div className="bg-red-50 text-red-700 p-4 rounded-xl border border-red-100 text-sm font-bold animate-fade-in-up">
+                                        {errorMsg}
+                                    </div>
+                                )}
                             </form>
                         </div>
                     </div>

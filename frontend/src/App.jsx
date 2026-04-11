@@ -19,6 +19,7 @@ import CollegeInventory from './pages/CollegeInventory';
 import StudentPortal from './pages/StudentPortal';
 import MBBS from './pages/MBBS.jsx';
 import PublicLayout from './components/public/PublicLayout.jsx';
+import Archive from './pages/Archive.jsx';
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -74,6 +75,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/admin/archive"
+            element={
+              <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
+                <AdminLayout><Archive /></AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
           {/* 🔒 Protected Student Portal (Role: student) */}
           <Route
             path="/portal"
@@ -88,6 +98,8 @@ function App() {
             path="/mbbs-abroad"
             element={<MBBS />}
           />
+
+          
 
         </Routes>
       </LeadProvider>

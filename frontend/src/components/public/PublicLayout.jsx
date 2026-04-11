@@ -15,38 +15,47 @@ const PublicLayout = ({ children }) => {
     return (
         <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-jcs-brand selection:text-white pb-20 md:pb-0 flex flex-col">
 
-            {/* 🟢 Premium Animated Navbar */}
-            <nav className={`fixed w-full top-0 z-50 transition-all duration-500 py-3 ${scrolled ? 'bg-white/90 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
+            {/* 🟢 Premium Animated Navbar (Upscaled for Mobile) */}
+            <nav className={`fixed w-full top-0 z-50 transition-all duration-500 py-3 md:py-3 ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
                 <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
 
                     {/* Logo Area */}
-                    <div className="flex items-center gap-3 group cursor-pointer">
-                        <div className="w-11 h-11 md:w-12 md:h-12 bg-gradient-to-br from-jcs-deep to-[#13422E] rounded-xl flex items-center justify-center font-black text-white text-sm md:text-base shadow-lg group-hover:scale-105 transition-transform duration-300">
+                    <div className="flex items-center gap-2.5 md:gap-3 group cursor-pointer">
+                        {/* Increased mobile box size to w-10 h-10 */}
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-jcs-deep to-[#13422E] rounded-lg md:rounded-xl flex items-center justify-center font-black text-white text-xs md:text-base shadow-lg group-hover:scale-105 transition-transform duration-300">
                             JCS
                         </div>
                         <div className="flex flex-col justify-center">
-                            <span className={`font-extrabold text-sm md:text-lg leading-tight tracking-tight transition-colors duration-300 ${scrolled ? 'text-gray-900' : 'text-white'}`}>JAMIA CONSULTANCY</span>
-                            <span className={`text-[9px] md:text-[10px] font-bold tracking-widest uppercase mt-0.5 ${scrolled ? 'text-jcs-brand' : 'text-white/80'}`}>Services • Delhi NCR</span>
+                            {/* Bumped up text size, kept tight line-height */}
+                            <span className={`font-extrabold text-[13px] sm:text-[15px] md:text-lg leading-none tracking-tight transition-colors duration-300 ${scrolled ? 'text-gray-900' : 'text-white'}`}>
+                                JAMIA CONSULTANCY
+                            </span>
+                            <span className={`text-[8.5px] md:text-[10px] font-bold tracking-widest uppercase mt-1 ${scrolled ? 'text-jcs-brand' : 'text-white/80'}`}>
+                                Services • Delhi NCR
+                            </span>
                         </div>
                     </div>
 
-
-                    <div className="flex items-center gap-4">
-                        {/* Discrete Portal Link for students/staff */}
-                        
+                    {/* Links Area */}
+                    <div className="flex items-center gap-3.5 md:gap-6">
+                        {/* Increased link sizes */}
                         <NavLink
                             to="/mbbs-abroad"
-                            className="text-gray-700 hover:text-jcs-brand font-bold transition-colors"
+                            className={`text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-colors uppercase ${scrolled ? 'text-gray-700 hover:text-jcs-brand' : 'text-jcs-brand hover:text-white drop-shadow-md'
+                                }`}
                         >
                             MBBS Abroad
                         </NavLink>
+
                         <NavLink
                             to="/login"
-                            className={({ isActive }) => `text-sm font-bold transition-colors ${scrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white/80 hover:text-white'}`}
+                            className={`text-xs sm:text-sm md:text-sm font-bold transition-colors ${scrolled ? 'text-gray-500 hover:text-gray-900' : 'text-white/90 hover:text-white'
+                                }`}
                         >
-                            Portal Login
+                            Login
                         </NavLink>
 
+                        {/* Hidden entirely on mobile to save space, visible on desktop */}
                         <a href="tel:+919990922119" className={`hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-300 ${scrolled ? 'bg-jcs-deep text-white shadow-md hover:bg-gray-900' : 'bg-white/20 text-white backdrop-blur-md border border-white/30 hover:bg-white hover:text-jcs-deep'}`}>
                             <FiPhone size={16} /> Call us 9990922119
                         </a>

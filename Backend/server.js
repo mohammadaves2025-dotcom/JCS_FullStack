@@ -10,6 +10,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import collegeRoutes from "./routes/collegeRoutes.js";
 import exportRoutes from "./routes/exportRoutes.js";
 import broadcastRoutes from "./routes/broadcastRoutes.js";
+import archiveRoutes from "./routes/archiveRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -55,6 +56,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/colleges", collegeRoutes);
 app.use("/api/exports", exportRoutes);
 app.use("/api/broadcast", broadcastRoutes);
+app.use("/api/archives", archiveRoutes);
 
 app.get("/", (req, res) => {
     res.send("JCS CRM API is running!");

@@ -6,18 +6,36 @@ const clientSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   email: { type: String, required: true, lowercase: true, trim: true },
 
-  // 🟢 NEW: Profile Photo URL
   profilePhoto: { type: String, default: "" },
   bloodGroup: { type: String, default: "" },
   address: { type: String, default: "" },
-  requiredDocuments: { 
-      type: [String], 
-      default: ["10th Marksheet", "12th Marksheet", "Aadhar Card"] 
+
+  // 🟢 NEW: Social Category
+  socialCategory: {
+    type: String,
+    enum: ["General", "OBC", "SC", "ST", "OBC-NCL", "EWS"],
+    default: "General"
   },
 
-  // 🟢 NEW: College Interests
+  requiredDocuments: { 
+    type: [String], 
+    default: ["10th Marksheet", "12th Marksheet", "Aadhar Card"] 
+  },
+
   targetCourse: { type: String },
-  targetColleges: [{ type: String }], // Array of college names
+  targetColleges: [{ type: String }],
+
+  // 🟢 NEW: University Account Credentials (stored by admin for partner universities)
+  universityAccounts: [
+    {
+      universityName: { type: String },
+      portalUrl: { type: String },
+      username: { type: String },
+      password: { type: String },
+      notes: { type: String },
+      createdAt: { type: Date, default: Date.now }
+    }
+  ],
 
   admissionStatus: {
     type: String,
@@ -30,7 +48,6 @@ const clientSchema = new mongoose.Schema({
     amountPaid: { type: Number, default: 0 }
   },
 
-  // Flexible array so you can upload ANYTHING
   documents: [
     {
       docType: { type: String },
@@ -39,7 +56,7 @@ const clientSchema = new mongoose.Schema({
     }
   ],
   temperature: { type: String, enum: ["Hot", "Warm", "Cold"], default: "Warm" },
-  waitlistReason: { type: String }, // "Funds", "Exams", etc.
+  waitlistReason: { type: String },
   interactions: [
     {
       date: { type: Date, default: Date.now },

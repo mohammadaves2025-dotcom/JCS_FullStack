@@ -20,6 +20,7 @@ import StudentPortal from './pages/StudentPortal';
 import MBBS from './pages/MBBS.jsx';
 import PublicLayout from './components/public/PublicLayout.jsx';
 import Archive from './pages/Archive.jsx';
+import Transactions from './pages/Transactions.jsx';
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -80,6 +81,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['counselor', 'super-admin']}>
                 <AdminLayout><Archive /></AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/admin/transactions"
+            element={
+              <ProtectedRoute allowedRoles={['super-admin']}>
+                <AdminLayout><Transactions /></AdminLayout>
               </ProtectedRoute>
             }
           />

@@ -8,29 +8,44 @@ const Testimonials = () => {
     ];
 
     return (
-        <div className="py-24 bg-gray-50/50 border-t border-gray-100">
+        <div className="py-24 bg-gray-50/50 border-t border-gray-100 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
                 
-                <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mb-2">
-                    1,200+ <span className="text-jcs-brand">Success Stories</span>
-                </h2>
-                <p className="text-gray-500 font-medium text-lg mb-12">From Dreamers to Achievers.</p>
+                {/* 🟢 Animated Header */}
+                <div className="text-center mb-16 reveal-on-scroll">
+                    <div className="line-mask">
+                        <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-4 line-reveal delay-line-1 pb-2">
+                            1,200+ <span className="text-jcs-brand">Success Stories</span>
+                        </h2>
+                    </div>
+                    <div className="line-mask">
+                        <p className="text-gray-500 font-medium text-lg line-reveal delay-line-2 pb-2">
+                            From Dreamers to Achievers.
+                        </p>
+                    </div>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* 🟢 Restored Classic Grid Layout */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children reveal-on-scroll">
                     {stories.map((story, idx) => (
-                        <div key={idx} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
-                            <div className="flex items-center gap-4 mb-6">
-                                <img src={`https://i.pravatar.cc/150?img=${story.img}`} className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100" alt={story.name} />
+                        <div key={idx} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative">
+                            {/* Subtle Hover Glow */}
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-jcs-brand/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                            
+                            <div className="flex items-center gap-4 mb-6 relative z-10">
+                                <div className="w-12 h-12 rounded-full p-0.5 bg-white shadow-sm border border-gray-100 shrink-0">
+                                    <img src={`https://i.pravatar.cc/150?img=${story.img}`} className="w-full h-full rounded-full object-cover" alt={story.name} />
+                                </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-900 leading-none">{story.name}</h4>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{story.course} → {story.college}</p>
+                                    <h4 className="font-bold text-gray-900 leading-none group-hover:text-jcs-brand transition-colors">{story.name}</h4>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1.5">{story.course} → {story.college}</p>
                                 </div>
                             </div>
-                            <p className="text-gray-600 text-sm font-medium leading-relaxed italic">
+                            <p className="text-gray-600 text-sm font-medium leading-relaxed italic relative z-10">
                                 "{story.quote}"
                             </p>
-                            <div className="mt-6 pt-4 border-t border-gray-50 flex gap-2">
-                                <span className="bg-blue-50 text-blue-500 text-[10px] font-bold px-2 py-1 rounded-md">{story.course}</span>
+                            <div className="mt-6 pt-4 border-t border-gray-50 flex gap-2 relative z-10">
+                                <span className="bg-blue-50 text-blue-500 text-[10px] font-bold px-2.5 py-1.5 rounded-lg tracking-wide">{story.course}</span>
                             </div>
                         </div>
                     ))}

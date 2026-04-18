@@ -29,7 +29,7 @@ const UniversityLogos = () => {
 
                 <div className="flex gap-10 w-max animate-infinite-scroll px-4 items-center">
                     {doubledUniversities.map((uni, idx) => (
-                        <div key={idx} className="flex items-center gap-3 grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer">
+                        <div key={idx} className="flex items-center gap-3  opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer">
                             <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm shrink-0">
                                 <img 
                                     src={`https://www.google.com/s2/favicons?domain=${uni.domain}&sz=128`} 

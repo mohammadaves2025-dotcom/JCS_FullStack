@@ -38,13 +38,13 @@ const Hero = () => {
                         Admissions Open 2026
                     </span>
                     <h1 className="text-5xl md:text-6xl lg:text-[4rem] font-black leading-[1.1] tracking-tight mb-6">
-                        Take the First Step to <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-jcs-brand to-white">STUDY AT TOP TIER</span> Colleges.
+                        Secure Your Path <br /> to <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-jcs-brand to-white">TOP TIER COLLEGES</span> 
                     </h1>
 
                     <div className="space-y-5 text-base md:text-lg font-medium text-gray-300 mt-8">
-                        <p className="flex items-center gap-4"><FiCheckCircle className="text-jcs-brand shrink-0" size={24} /> Direct Management Quota Admissions</p>
-                        <p className="flex items-center gap-4"><FiCheckCircle className="text-jcs-brand shrink-0" size={24} /> Guaranteed Placement Support</p>
-                        <p className="flex items-center gap-4"><FiCheckCircle className="text-jcs-brand shrink-0" size={24} /> Offer letter in less than 48 hours</p>
+                        <p className="flex items-center gap-4"><FiCheckCircle className="text-jcs-brand shrink-0" size={24} /> Personalized Admission Guidance from Start to Finish</p>
+                        <p className="flex items-center gap-4"><FiCheckCircle className="text-jcs-brand shrink-0" size={24} />  Expert Counselling & Complete Documentation Support</p>
+                        <p className="flex items-center gap-4"><FiCheckCircle className="text-jcs-brand shrink-0" size={24} /> 100% Hassle-Free Admission Assistance</p>
                     </div>
                 </div>
 

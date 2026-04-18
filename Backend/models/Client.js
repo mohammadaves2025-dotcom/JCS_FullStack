@@ -6,6 +6,12 @@ const clientSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   email: { type: String, required: true, lowercase: true, trim: true },
 
+  guardianDetails: {
+    name: { type: String, default: "" },
+    phone: { type: String, default: "" },
+    email: { type: String, default: "" }
+  },
+
   profilePhoto: { type: String, default: "" },
   bloodGroup: { type: String, default: "" },
   address: { type: String, default: "" },
@@ -17,9 +23,9 @@ const clientSchema = new mongoose.Schema({
     default: "General"
   },
 
-  requiredDocuments: { 
-    type: [String], 
-    default: ["10th Marksheet", "12th Marksheet", "Aadhar Card"] 
+  requiredDocuments: {
+    type: [String],
+    default: ["10th Marksheet", "12th Marksheet", "Aadhar Card"]
   },
 
   targetCourse: { type: String },
@@ -39,8 +45,13 @@ const clientSchema = new mongoose.Schema({
 
   admissionStatus: {
     type: String,
-    enum: ["Documents Pending", "Documents Verified", "College Applied", "Seat Confirmed"],
-    default: "Documents Pending"
+    enum: [
+      "COLLEGE FORM APPLIED",
+      "WAITING FOR ALLOTMENT",
+      "SEAT CONFIRMED",
+      "PAYMENT"
+    ],
+    default: "COLLEGE FORM APPLIED"
   },
 
   financials: {
@@ -55,7 +66,13 @@ const clientSchema = new mongoose.Schema({
       public_id: { type: String }
     }
   ],
-  temperature: { type: String, enum: ["Hot", "Warm", "Cold"], default: "Warm" },
+
+  temperature: {
+    type: String,
+    enum: ["INTERESTED", "FOLLOW UP 1", "FOLLOW UP 2"],
+    default: "INTERESTED"
+  },
+  
   waitlistReason: { type: String },
   interactions: [
     {

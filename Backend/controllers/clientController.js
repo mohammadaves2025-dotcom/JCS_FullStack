@@ -42,6 +42,7 @@ export const getClientById = async (req, res) => {
 export const updateClient = async (req, res) => {
     const {
         admissionStatus,
+        temperature,
         totalAgreedAmount,
         amountPaid,
         documents,
@@ -52,7 +53,8 @@ export const updateClient = async (req, res) => {
         address,
         requiredDocuments,
         socialCategory,        // 🟢 NEW
-        universityAccounts     // 🟢 NEW
+        universityAccounts,
+        guardianDetails    // 🟢 NEW
     } = req.body;
 
     try {
@@ -62,6 +64,7 @@ export const updateClient = async (req, res) => {
         }
 
         if (admissionStatus) client.admissionStatus = admissionStatus;
+        if (temperature !== undefined) client.temperature = temperature;
         if (profilePhoto !== undefined) client.profilePhoto = profilePhoto;
         if (targetColleges) client.targetColleges = targetColleges;
         if (targetCourse !== undefined) client.targetCourse = targetCourse;
@@ -70,6 +73,11 @@ export const updateClient = async (req, res) => {
         if (requiredDocuments) client.requiredDocuments = requiredDocuments;
         if (socialCategory !== undefined) client.socialCategory = socialCategory;  // 🟢 NEW
         if (universityAccounts !== undefined) client.universityAccounts = universityAccounts; // 🟢 NEW
+
+
+        if (guardianDetails !== undefined) {
+            client.guardianDetails = { ...client.guardianDetails, ...guardianDetails };
+        }
 
         if (!client.financials) {
             client.financials = { totalAgreedAmount: 0, amountPaid: 0 };
@@ -116,11 +124,16 @@ export const getDashboardStats = async (req, res) => {
             { $group: { _id: "$admissionStatus", count: { $sum: 1 } } }
         ]);
 
+        const leadDistribution = await Client.aggregate([
+            { $group: { _id: "$temperature", count: { $sum: 1 } } }
+        ]);
+
         res.status(200).json({
             leads: totalInquiries,
             conversions: convertedClients,
             revenue: revenueData[0] || { totalRevenue: 0, totalCollected: 0 },
             statusDistribution,
+            leadDistribution,
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

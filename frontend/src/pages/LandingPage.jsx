@@ -6,6 +6,7 @@ import Universities from '../components/public/Universities';
 import Testimonials from '../components/public/Testimonials';
 import UniversityLogos from '../components/public/UniversityLogos';
 import { useEffect } from 'react';
+import Choose from '../components/public/Choose';
 
 const LandingPage = () => {
 
@@ -36,6 +37,7 @@ const LandingPage = () => {
             <Universities />
             <UniversityLogos />
             <Testimonials />
+            <Choose />
         </PublicLayout>
     );
 };

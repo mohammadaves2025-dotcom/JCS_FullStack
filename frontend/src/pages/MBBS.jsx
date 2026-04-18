@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { FiSend, FiUser, FiPhone, FiMail, FiMapPin, FiGlobe, FiBookOpen, FiCheckCircle, FiShield, FiUsers, FiArrowRight, FiClock } from 'react-icons/fi';
 import { LeadContext } from '../context/LeadContext';
+import logo from '../assets/JCS-LOGO1.jpeg';
 
 // 🟢 Animated counter hook for the stats
 const useCounter = (target, duration = 1800, start = false) => {
@@ -25,6 +26,9 @@ const MBBS = () => {
     const [statsStarted, setStatsStarted] = useState(false);
     const statsRef = useRef(null);
 
+    // 🔧 FIX 1: destructure pathname from useLocation (was imported but never used)
+    const { pathname } = useLocation();
+
     // Navbar Scroll Listener
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -45,12 +49,11 @@ const MBBS = () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target); // Trigger once and keep visible
+                    observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-        // Slight delay to ensure DOM is ready
         setTimeout(() => {
             const hiddenElements = document.querySelectorAll('.reveal-on-scroll');
             hiddenElements.forEach(el => observer.observe(el));
@@ -82,30 +85,53 @@ const MBBS = () => {
         { country: "Uzbekistan", cost: "14-20 Lakhs", duration: "5 Years", image: "https://flagcdn.com/uz.svg", highlight: "Emerging" },
     ];
 
+    const forceSolidNav = ['/terms', '/privacy', '/privacy-policy'].includes(pathname);
+    const isSolid = scrolled || forceSolidNav;
+
     return (
         <div className="bg-white min-h-screen">
 
-            {/* Navbar */}
-            <nav className={`fixed w-full top-0 z-50 transition-all duration-500 py-3 ${scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
+            {/* 🟢 Premium Animated Navbar */}
+            <nav className={`fixed w-full top-0 z-50 transition-all duration-500 py-3 md:py-3 ${isSolid ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
                 <div className="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center">
-                    <div className="flex items-center gap-2.5 md:gap-3 group cursor-pointer">
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-jcs-deep to-[#13422E] rounded-lg md:rounded-xl flex items-center justify-center font-black text-white text-xs md:text-base shadow-[0_0_15px_rgba(0,208,132,0.3)] group-hover:scale-105 transition-transform duration-300 animate-pulse-glow">
-                            JCS
+
+                    {/* Logo Area */}
+                    <NavLink to="/" className="flex items-center gap-2.5 md:gap-3 group cursor-pointer">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-jcs-deep to-[#13422E] rounded-lg md:rounded-xl flex items-center justify-center font-black text-white text-xs md:text-base shadow-lg group-hover:scale-105 transition-transform duration-300">
+                            <img
+                                src={logo}
+                                alt="JCS Logo"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300 bg-white"
+                            />
                         </div>
                         <div className="flex flex-col justify-center">
-                            <span className={`font-extrabold text-[13px] sm:text-[15px] md:text-lg leading-none tracking-tight transition-colors duration-300 ${scrolled ? 'text-gray-900' : 'text-white drop-shadow-md'}`}>
+                            <span className={`font-extrabold text-[13px] sm:text-[15px] md:text-[25px] leading-none tracking-tight transition-colors duration-300 ${isSolid ? 'text-gray-900' : 'text-white'}`}>
                                 JAMIA CONSULTANCY
                             </span>
-                            <span className={`text-[8.5px] md:text-[10px] font-bold tracking-widest uppercase mt-1 text-jcs-brand`}>
-                                Admissions • 2026
+                            <span className={`text-[8.5px] md:text-[10px] font-bold tracking-widest uppercase mt-1 ${isSolid ? 'text-jcs-brand' : 'text-white/80'}`}>
+                                Guiding Your Academic JourneY
                             </span>
                         </div>
-                    </div>
+                    </NavLink>
+
+                    {/* Links Area */}
                     <div className="flex items-center gap-3.5 md:gap-6">
-                        <NavLink to="/mbbs-abroad" className={`text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-all uppercase ${scrolled ? 'text-gray-700 hover:text-jcs-brand' : 'text-jcs-brand drop-shadow-[0_0_8px_rgba(0,208,132,0.6)] hover:text-white'}`}>MBBS Abroad</NavLink>
-                        <NavLink to="/login" className={`text-[11px] sm:text-xs md:text-sm font-bold transition-colors ${scrolled ? 'text-gray-500 hover:text-gray-900' : 'text-gray-400 hover:text-jcs-brand'}`}>Portal</NavLink>
-                        <a href="tel:+919990922119" className={`hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-300 ${scrolled ? 'bg-jcs-deep text-white shadow-md hover:bg-gray-900' : 'bg-jcs-brand text-gray-900 shadow-[0_0_15px_rgba(0,208,132,0.4)] hover:bg-white hover:shadow-none'}`}>
-                            <FiPhone size={16} /> Contact
+                        <NavLink
+                            to="/mbbs-abroad"
+                            className={`text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-colors uppercase ${isSolid ? 'text-gray-700 hover:text-jcs-brand' : 'text-jcs-brand hover:text-white drop-shadow-md'}`}
+                        >
+                            MBBS Abroad
+                        </NavLink>
+
+                        <NavLink
+                            to="/login"
+                            className={`text-xs sm:text-sm md:text-sm font-bold transition-colors ${isSolid ? 'text-gray-500 hover:text-gray-900' : 'text-white/90 hover:text-white'}`}
+                        >
+                            Login
+                        </NavLink>
+
+                        <a href="tel:+919990922119" className={`hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-300 ${isSolid ? 'bg-jcs-deep text-white shadow-md hover:bg-gray-900' : 'bg-white/20 text-white backdrop-blur-md border border-white/30 hover:bg-white hover:text-jcs-deep'}`}>
+                            <FiPhone size={16} /> Call us 9990922119
                         </a>
                     </div>
                 </div>
@@ -217,22 +243,17 @@ const MBBS = () => {
                         {destinations.map((d, i) => (
                             <div key={i} className="bg-white p-8 rounded-[2.5rem] shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_40px_rgba(0,208,132,0.12)] hover:border-jcs-brand/30 hover:-translate-y-2 transition-all duration-500 group cursor-pointer relative overflow-hidden">
 
-                                {/* Subtle background glow that reveals on hover */}
                                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-jcs-brand/10 rounded-full blur-3xl group-hover:bg-jcs-brand/20 transition-colors duration-500 pointer-events-none"></div>
 
-                                {/* Header: Flag & Badge */}
                                 <div className="flex justify-between items-start mb-8 relative z-10">
-                                    {/* Premium Flag Pedestal */}
                                     <div className="w-16 h-16 rounded-full p-1 bg-white shadow-[0_8px_15px_rgba(0,0,0,0.08)] border border-gray-100 flex items-center justify-center group-hover:shadow-[0_12px_25px_rgba(0,208,132,0.3)] group-hover:border-jcs-brand/50 transition-all duration-500 bg-gradient-to-br from-white to-gray-50">
                                         <img src={d.image} alt={d.country} className="w-full h-full object-cover rounded-full shadow-inner" />
                                     </div>
-                                    {/* Refined Badge */}
                                     <span className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full bg-jcs-brand/10 text-jcs-brand border border-jcs-brand/20">
                                         {d.highlight}
                                     </span>
                                 </div>
 
-                                {/* Content */}
                                 <h3 className="text-3xl font-black text-gray-900 mb-6 tracking-tight relative z-10 group-hover:text-jcs-deep transition-colors">
                                     {d.country}
                                 </h3>
@@ -242,7 +263,6 @@ const MBBS = () => {
                                     <p className="font-black text-jcs-deep text-2xl tracking-tight">{d.cost}</p>
                                 </div>
 
-                                {/* Footer */}
                                 <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between relative z-10">
                                     <span className="text-xs font-bold text-gray-500 flex items-center gap-1.5">
                                         <FiClock className="text-gray-400" /> {d.duration}
@@ -252,7 +272,6 @@ const MBBS = () => {
                                     </span>
                                 </div>
 
-                                {/* Hover Bottom Bar Effect */}
                                 <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-jcs-brand to-jcs-brand-light transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                             </div>
                         ))}
@@ -413,7 +432,13 @@ const MBBS = () => {
             <footer className="bg-gray-50 border-t border-gray-200 pt-16 pb-8">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="flex items-center gap-2 mb-4">
-                        <div className="w-8 h-8 bg-jcs-deep rounded-lg flex items-center justify-center font-black text-white text-xs animate-pulse-glow">JCS</div>
+                        <div className="w-8 h-8 bg-jcs-deep rounded-lg flex items-center justify-center font-black text-white text-xs animate-pulse-glow">
+                            <img
+                                src={logo}
+                                alt="JCS Logo"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300 bg-white"
+                            />
+                        </div>
                         <h3 className="text-xl font-black text-gray-900">Secure Your Future.</h3>
                     </div>
                     <p className="text-sm text-gray-500 font-medium max-w-4xl leading-relaxed mb-10">

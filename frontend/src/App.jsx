@@ -17,10 +17,14 @@ import ClientVault from './pages/ClientVault';
 import BroadcastEngine from './pages/BroadcastEngine';
 import CollegeInventory from './pages/CollegeInventory';
 import StudentPortal from './pages/StudentPortal';
-import MBBS from './pages/MBBS.jsx';
-import PublicLayout from './components/public/PublicLayout.jsx';
-import Archive from './pages/Archive.jsx';
-import Transactions from './pages/Transactions.jsx';
+import MBBS from './pages/MBBS';
+import PublicLayout from './components/public/PublicLayout';
+import Archive from './pages/Archive';
+import Transactions from './pages/Transactions';
+import Terms from './pages/Terms';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import JamiaHamdardPage from './pages/JamiaHamdardPage';
+
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -33,6 +37,7 @@ function App() {
           {/* 🟢 Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/jamia-hamdard" element={<JamiaHamdardPage />} />
 
           {/* 🔒 Protected Admin Routes (Role: admin, super-admin) */}
           <Route
@@ -108,6 +113,9 @@ function App() {
             path="/mbbs-abroad"
             element={<MBBS />}
           />
+
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
 
 
 

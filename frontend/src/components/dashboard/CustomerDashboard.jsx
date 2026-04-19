@@ -2,9 +2,9 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 import {
-    FiFolder, FiDollarSign, FiUploadCloud, FiFileText, FiCheckCircle, FiX,
+    FiDollarSign, FiUploadCloud, FiFileText, FiCheckCircle, FiX,
     FiExternalLink, FiCamera, FiTarget, FiBookOpen, FiUser, FiPhone, FiMail,
-    FiHeart, FiCopy, FiGlobe, FiPlus, FiTrash2, FiLock, FiCheck, FiEdit2, FiThermometer
+    FiHeart, FiCopy, FiGlobe, FiPlus, FiTrash2, FiLock, FiCheck
 } from 'react-icons/fi';
 
 const buildWhatsAppText = (client) => {
@@ -15,8 +15,13 @@ const buildWhatsAppText = (client) => {
     let text = `*JCS STUDENT PROFILE*\n${sep}\n`;
     text += `👤 *Name:* ${client.name}\n`;
     text += `📞 *Phone:* ${client.phone}\n`;
-    text += `🔥 *Lead Status:* ${client.temperature || 'INTERESTED'}\n`;
     text += `🎓 *Admission Stage:* ${client.admissionStatus || 'COLLEGE FORM APPLIED'}\n`;
+    if (client.guardianDetails?.name) {
+        text += `\n${sep}\n👨‍👩‍👦 *Guardian Details*\n`;
+        text += `• Name: ${client.guardianDetails.name}\n`;
+        if (client.guardianDetails.phone) text += `• Phone: ${client.guardianDetails.phone}\n`;
+        if (client.guardianDetails.email) text += `• Email: ${client.guardianDetails.email}\n`;
+    }
     text += `\n${sep}\n📚 *Academic Details*\n`;
     if (client.targetCourse) text += `• Course: ${client.targetCourse}\n`;
     if (client.targetColleges?.length) text += `• Colleges: ${client.targetColleges.join(', ')}\n`;
@@ -43,9 +48,6 @@ const STATUS_CONFIG = {
     'WAITING FOR ALLOTMENT': { dot: 'bg-blue-400', pill: 'bg-blue-50 text-blue-700 border-blue-200' },
     'SEAT CONFIRMED': { dot: 'bg-emerald-400', pill: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
     'PAYMENT': { dot: 'bg-rose-400', pill: 'bg-rose-50 text-rose-700 border-rose-200' },
-    'INTERESTED': { dot: 'bg-teal-400', pill: 'bg-teal-50 text-teal-700 border-teal-200' },
-    'FOLLOW UP 1': { dot: 'bg-amber-400', pill: 'bg-amber-50 text-amber-700 border-amber-200' },
-    'FOLLOW UP 2': { dot: 'bg-orange-400', pill: 'bg-orange-50 text-orange-700 border-orange-200' },
 };
 
 const FieldRow = ({ label, children }) => (
@@ -79,10 +81,10 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     const [editColleges, setEditColleges] = useState('');
     const [editCourse, setEditCourse] = useState('');
     const [admissionStatus, setAdmissionStatus] = useState('');
-    const [leadStatus, setLeadStatus] = useState('');
     const [editBloodGroup, setEditBloodGroup] = useState('');
     const [editSocialCategory, setEditSocialCategory] = useState('');
     const [editAddress, setEditAddress] = useState('');
+    const [editGuardian, setEditGuardian] = useState({ name: '', phone: '', email: '' });
 
     const [universityAccounts, setUniversityAccounts] = useState([]);
     const [newAccount, setNewAccount] = useState({ universityName: '', portalUrl: '', username: '', password: '', notes: '' });
@@ -95,10 +97,10 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
             setEditColleges(client.targetColleges?.join(', ') || '');
             setEditCourse(client.targetCourse || '');
             setAdmissionStatus(client.admissionStatus || 'COLLEGE FORM APPLIED');
-            setLeadStatus(client.temperature || 'INTERESTED');
             setEditBloodGroup(client.bloodGroup || '');
             setEditSocialCategory(client.socialCategory || 'General');
             setEditAddress(client.address || '');
+            setEditGuardian({ name: client.guardianDetails?.name || '', phone: client.guardianDetails?.phone || '', email: client.guardianDetails?.email || '' });
             setUniversityAccounts(client.universityAccounts || []);
         }
     }, [client]);
@@ -162,7 +164,6 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     };
 
     const admStyle = STATUS_CONFIG[admissionStatus] || STATUS_CONFIG['COLLEGE FORM APPLIED'];
-    const leadStyle = STATUS_CONFIG[leadStatus] || STATUS_CONFIG['INTERESTED'];
 
     const due = (editFinancials.totalAgreedAmount || 0) - (editFinancials.amountPaid || 0);
     const paidPct = editFinancials.totalAgreedAmount > 0 ? Math.min(100, Math.round((editFinancials.amountPaid / editFinancials.totalAgreedAmount) * 100)) : 0;
@@ -178,61 +179,50 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
             <div className="bg-white w-full sm:max-w-6xl h-[96vh] sm:h-[90vh] rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col border border-gray-200">
 
                 <div className="shrink-0 bg-white border-b border-gray-100">
-                    <div className="px-6 pt-5 pb-4 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 min-w-0">
+                    <div className="px-4 sm:px-6 pt-3 pb-2 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
                             <div className="relative group/avatar shrink-0">
                                 {client.profilePhoto ? (
-                                    <img src={client.profilePhoto} alt="Profile" className="w-12 h-12 rounded-2xl object-cover ring-2 ring-gray-100" />
+                                    <img src={client.profilePhoto} alt="Profile" className="w-10 h-10 rounded-xl object-cover ring-2 ring-gray-100" />
                                 ) : (
-                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-jcs-deep to-[#13422E] flex items-center justify-center text-white font-black text-lg">
+                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-jcs-deep to-[#13422E] flex items-center justify-center text-white font-black text-base">
                                         {client.name?.charAt(0)}
                                     </div>
                                 )}
-                                <label className="absolute inset-0 bg-black/50 rounded-2xl opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center text-white cursor-pointer transition-opacity">
-                                    <FiCamera size={14} />
+                                <label className="absolute inset-0 bg-black/50 rounded-xl opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center text-white cursor-pointer transition-opacity">
+                                    <FiCamera size={12} />
                                     <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'photo', true)} disabled={uploadingDoc} />
                                 </label>
                             </div>
                             <div className="min-w-0">
-                                <h2 className="text-lg font-black text-gray-900 tracking-tight truncate">{client.name}</h2>
-                                <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                                    <span className="text-xs text-gray-400 font-semibold flex items-center gap-1"><FiPhone size={10} /> {client.phone}</span>
-                                    {client.email && <span className="text-xs text-gray-400 font-semibold flex items-center gap-1"><FiMail size={10} /> {client.email}</span>}
+                                <h2 className="text-base font-black text-gray-900 tracking-tight truncate leading-tight">{client.name}</h2>
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
+                                    <span className="text-[11px] text-gray-400 font-semibold flex items-center gap-1"><FiPhone size={9} /> {client.phone}</span>
+                                    {client.email && <span className="text-[11px] text-gray-400 font-semibold flex items-center gap-1 truncate max-w-[180px]"><FiMail size={9} /> {client.email}</span>}
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                            <div className="relative hidden md:block">
-                                <select
-                                    value={leadStatus}
-                                    onChange={(e) => { setLeadStatus(e.target.value); saveClientDetails({ temperature: e.target.value }, true); }}
-                                    className={`appearance-none pl-7 pr-4 py-2 rounded-xl text-[10px] font-black border cursor-pointer focus:outline-none transition-all ${leadStyle.pill}`}
-                                >
-                                    {['INTERESTED', 'FOLLOW UP 1', 'FOLLOW UP 2'].map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                                <span className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${leadStyle.dot}`} />
-                            </div>
-
                             <div className="relative">
                                 <select
                                     value={admissionStatus}
                                     onChange={(e) => { setAdmissionStatus(e.target.value); saveClientDetails({ admissionStatus: e.target.value }, true); }}
-                                    className={`appearance-none pl-7 pr-8 py-2 rounded-xl text-[10px] font-black border cursor-pointer focus:outline-none transition-all ${admStyle.pill}`}
+                                    className={`appearance-none pl-6 pr-3 py-1.5 rounded-lg text-[10px] font-black border cursor-pointer focus:outline-none transition-all ${admStyle.pill}`}
                                 >
                                     {['COLLEGE FORM APPLIED', 'WAITING FOR ALLOTMENT', 'SEAT CONFIRMED', 'PAYMENT'].map(s => <option key={s} value={s}>{s}</option>)}
                                 </select>
-                                <span className={`absolute left-2.5 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${admStyle.dot}`} />
+                                <span className={`absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${admStyle.dot}`} />
                             </div>
 
-                            <button onClick={onClose} className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"><FiX size={16} /></button>
+                            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"><FiX size={15} /></button>
                         </div>
                     </div>
 
-                    <div className="px-6 flex gap-0">
+                    <div className="px-4 sm:px-6 flex gap-0">
                         {TABS.map(tab => (
                             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                className={`relative px-4 py-3 text-xs font-black uppercase tracking-widest transition-colors border-b-2 flex items-center gap-2 ${activeTab === tab.id ? 'border-jcs-brand text-jcs-deep' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
+                                className={`relative px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-colors border-b-2 flex items-center gap-2 ${activeTab === tab.id ? 'border-jcs-brand text-jcs-deep' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
                                 {tab.label} {tab.count > 0 && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-gray-100">{tab.count}</span>}
                             </button>
                         ))}
@@ -246,27 +236,19 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                             <div className="space-y-5">
                                 <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <FiThermometer size={13} className="text-orange-500" />
-                                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Lead Engagement</span>
-                                    </div>
-                                    <FieldRow label="Temperature / Status">
-                                        <div className="flex gap-2">
-                                            <select value={leadStatus} onChange={(e) => setLeadStatus(e.target.value)}
-                                                className="flex-1 h-10 px-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand">
-                                                <option value="INTERESTED">INTERESTED</option>
-                                                <option value="FOLLOW UP 1">FOLLOW UP 1</option>
-                                                <option value="FOLLOW UP 2">FOLLOW UP 2</option>
-                                            </select>
-                                            <SaveBtn onClick={() => saveClientDetails({ temperature: leadStatus })} />
-                                        </div>
-                                    </FieldRow>
-                                </section>
-
-                                <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-                                    <div className="flex items-center gap-2 mb-2">
                                         <FiHeart size={13} className="text-rose-400" />
                                         <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Personal Info</span>
                                     </div>
+                                    <FieldRow label="Blood Group">
+                                        <div className="flex gap-2">
+                                            <select value={editBloodGroup} onChange={(e) => setEditBloodGroup(e.target.value)}
+                                                className="flex-1 h-10 px-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand">
+                                                <option value="">Not Set</option>
+                                                {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(bg => <option key={bg} value={bg}>{bg}</option>)}
+                                            </select>
+                                            <SaveBtn onClick={() => saveClientDetails({ bloodGroup: editBloodGroup })} />
+                                        </div>
+                                    </FieldRow>
                                     <FieldRow label="Social Category">
                                         <div className="flex gap-2">
                                             <select value={editSocialCategory} onChange={(e) => setEditSocialCategory(e.target.value)}
@@ -283,6 +265,29 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                             <SaveBtn onClick={() => saveClientDetails({ address: editAddress })} />
                                         </div>
                                     </FieldRow>
+                                </section>
+
+                                <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <FiUser size={13} className="text-indigo-400" />
+                                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Guardian Details</span>
+                                    </div>
+                                    <FieldRow label="Guardian Name">
+                                        <input type="text" value={editGuardian.name} onChange={(e) => setEditGuardian({ ...editGuardian, name: e.target.value })}
+                                            placeholder="e.g. Rahul Sharma"
+                                            className="w-full h-10 px-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold focus:outline-none focus:border-jcs-brand" />
+                                    </FieldRow>
+                                    <FieldRow label="Guardian Phone">
+                                        <input type="text" value={editGuardian.phone} onChange={(e) => setEditGuardian({ ...editGuardian, phone: e.target.value })}
+                                            placeholder="e.g. 9876543210"
+                                            className="w-full h-10 px-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold focus:outline-none focus:border-jcs-brand" />
+                                    </FieldRow>
+                                    <FieldRow label="Guardian Email">
+                                        <input type="email" value={editGuardian.email} onChange={(e) => setEditGuardian({ ...editGuardian, email: e.target.value })}
+                                            placeholder="e.g. guardian@email.com"
+                                            className="w-full h-10 px-3 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold focus:outline-none focus:border-jcs-brand" />
+                                    </FieldRow>
+                                    <SaveBtn onClick={() => saveClientDetails({ guardianDetails: editGuardian })} />
                                 </section>
                             </div>
 
@@ -406,16 +411,19 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 </section>
                             )}
 
-                            {['10th Marksheet', '12th Marksheet', 'Aadhar Card', 'Passport Size Photo'].filter(type => !client.documents?.some(d => d.docType === type)).length > 0 && (
-                                <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                                    <div className="px-5 py-4 border-b border-gray-50 flex items-center gap-2">
-                                        <FiFileText size={13} className="text-gray-400" />
-                                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pending Uploads</span>
-                                    </div>
-                                    <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {['10th Marksheet', '12th Marksheet', 'Aadhar Card', 'Passport Size Photo']
-                                            .filter(type => !client.documents?.some(d => d.docType === type))
-                                            .map(docType => (
+                            {(() => {
+                                const required = client.requiredDocuments?.length
+                                    ? client.requiredDocuments
+                                    : ['10th Marksheet', '12th Marksheet', 'Aadhar Card', 'Passport Size Photo'];
+                                const pending = required.filter(type => !client.documents?.some(d => d.docType === type));
+                                return pending.length > 0 && (
+                                    <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                        <div className="px-5 py-4 border-b border-gray-50 flex items-center gap-2">
+                                            <FiFileText size={13} className="text-gray-400" />
+                                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pending Uploads</span>
+                                        </div>
+                                        <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {pending.map(docType => (
                                                 <div key={docType} className="flex items-center justify-between p-3.5 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 hover:bg-gray-50 transition-colors">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-400 flex items-center justify-center shrink-0">
@@ -429,9 +437,10 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                                     </label>
                                                 </div>
                                             ))}
-                                    </div>
-                                </section>
-                            )}
+                                        </div>
+                                    </section>
+                                );
+                            })()}
 
                             <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                                 <div className="px-5 py-4 border-b border-gray-50 flex items-center gap-2">

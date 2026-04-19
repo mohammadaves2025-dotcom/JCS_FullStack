@@ -175,9 +175,12 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     ];
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-gray-900/60 backdrop-blur-sm p-0 sm:p-4">
-            <div className="bg-white w-full sm:max-w-6xl h-[96vh] sm:h-[90vh] rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col border border-gray-200">
+        // ✅ FIX 1: changed to items-end on mobile, items-center on desktop, added sm:p-6 for top breathing room
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-gray-900/60 backdrop-blur-sm p-0 sm:p-6">
+            {/* ✅ FIX 2: changed to dvh units so browser chrome doesn't clip the top */}
+            <div className="bg-white w-full sm:max-w-6xl h-[92dvh] sm:h-[88dvh] rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col border border-gray-200">
 
+                {/* ── Header ── */}
                 <div className="shrink-0 bg-white border-b border-gray-100">
                     <div className="px-4 sm:px-6 pt-3 pb-2 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
@@ -229,6 +232,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                     </div>
                 </div>
 
+                {/* ── Scrollable Body ── */}
                 <div className="flex-1 overflow-y-auto bg-gray-50/50">
                     {activeTab === 'profile' && (
                         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">

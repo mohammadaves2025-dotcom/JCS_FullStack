@@ -164,7 +164,6 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     };
 
     const admStyle = STATUS_CONFIG[admissionStatus] || STATUS_CONFIG['COLLEGE FORM APPLIED'];
-
     const due = (editFinancials.totalAgreedAmount || 0) - (editFinancials.amountPaid || 0);
     const paidPct = editFinancials.totalAgreedAmount > 0 ? Math.min(100, Math.round((editFinancials.amountPaid / editFinancials.totalAgreedAmount) * 100)) : 0;
 
@@ -175,12 +174,12 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     ];
 
     return (
-        // ✅ FIX 1: changed to items-end on mobile, items-center on desktop, added sm:p-6 for top breathing room
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-gray-900/60 backdrop-blur-sm p-0 sm:p-6">
-            {/* ✅ FIX 2: changed to dvh units so browser chrome doesn't clip the top */}
-            <div className="bg-white w-full sm:max-w-6xl h-[92dvh] sm:h-[88dvh] rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col border border-gray-200">
+        // ✅ KEY FIX: pt-16 on mobile pushes modal below browser chrome; sm:pt-0 resets on desktop
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-gray-900/60 backdrop-blur-sm p-0 sm:p-6 pt-16 sm:pt-0">
+            {/* ✅ Reduced mobile height to h-[84dvh] to account for the pt-16 offset */}
+            <div className="bg-white w-full sm:max-w-6xl h-[84dvh] sm:h-[88dvh] rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col border border-gray-200">
 
-                {/* ── Header ── */}
+                {/* ── Sticky Header with name + tabs ── */}
                 <div className="shrink-0 bg-white border-b border-gray-100">
                     <div className="px-4 sm:px-6 pt-3 pb-2 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
@@ -217,16 +216,24 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 </select>
                                 <span className={`absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${admStyle.dot}`} />
                             </div>
-
-                            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors"><FiX size={15} /></button>
+                            <button onClick={onClose} className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+                                <FiX size={15} />
+                            </button>
                         </div>
                     </div>
 
+                    {/* ── Tab Bar ── */}
                     <div className="px-4 sm:px-6 flex gap-0">
                         {TABS.map(tab => (
-                            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                                className={`relative px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-colors border-b-2 flex items-center gap-2 ${activeTab === tab.id ? 'border-jcs-brand text-jcs-deep' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
-                                {tab.label} {tab.count > 0 && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-gray-100">{tab.count}</span>}
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`relative px-4 py-2.5 text-xs font-black uppercase tracking-widest transition-colors border-b-2 flex items-center gap-2 ${activeTab === tab.id ? 'border-jcs-brand text-jcs-deep' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                            >
+                                {tab.label}
+                                {tab.count > 0 && (
+                                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-gray-100">{tab.count}</span>
+                                )}
                             </button>
                         ))}
                     </div>
@@ -234,9 +241,12 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
 
                 {/* ── Scrollable Body ── */}
                 <div className="flex-1 overflow-y-auto bg-gray-50/50">
+
+                    {/* ── PROFILE TAB ── */}
                     {activeTab === 'profile' && (
                         <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
+                            {/* Column 1: Personal + Guardian */}
                             <div className="space-y-5">
                                 <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
                                     <div className="flex items-center gap-2 mb-2">
@@ -295,6 +305,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 </section>
                             </div>
 
+                            {/* Column 2: Academic + Financials */}
                             <div className="space-y-5">
                                 <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
                                     <div className="flex items-center gap-2 mb-2">
@@ -352,6 +363,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                 )}
                             </div>
 
+                            {/* Column 3: Quick Stats + Share */}
                             <div className="space-y-5">
                                 <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                                     <div className="flex items-center gap-2 mb-4">
@@ -362,7 +374,6 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                         <StatTile label="Docs" value={client.documents?.length || 0} icon="📁" colorClass="bg-blue-50 text-blue-700" />
                                         <StatTile label="Portals" value={universityAccounts.length} icon="🎓" colorClass="bg-orange-50 text-orange-700" />
                                     </div>
-
                                     <div className="flex items-center gap-2 mb-4 pt-4 border-t border-gray-50">
                                         <WhatsAppIcon size={13} />
                                         <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Share Profile</span>
@@ -380,6 +391,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                         </div>
                     )}
 
+                    {/* ── DOCUMENTS TAB ── */}
                     {activeTab === 'documents' && (
                         <div className="p-6 space-y-5">
                             {uploadingDoc && (
@@ -466,6 +478,7 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                         </div>
                     )}
 
+                    {/* ── UNIVERSITY / PORTALS TAB ── */}
                     {activeTab === 'university' && (
                         <div className="p-6 space-y-5">
                             <div className="flex items-center justify-between">

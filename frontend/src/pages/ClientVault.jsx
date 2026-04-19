@@ -193,9 +193,9 @@ const ClientVault = () => {
                                             </>
                                         )}
                                     </div>
-                                    
+
                                     <p className="text-[10px] text-gray-400 font-bold mt-1">
-                
+
                                         Update: {new Date(client.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                                     </p>
                                 </div>

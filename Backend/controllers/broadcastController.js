@@ -5,8 +5,13 @@ import sendEmail from "../utils/sendEmail.js";
 // @route   GET /api/broadcast/targets
 // @access  Private (Staff/Admin)
 export const getBroadcastTargets = async (req, res) => {
-    const targets = await Inquiry.find({ status: "Waiting List" }).select("name email phone whatsappOptIn");
-    res.status(200).json({ count: targets.length, targets });
+    try {
+        const targets = await Inquiry.find({ status: "Waiting List" }).select("name email phone whatsappOptIn");
+        res.status(200).json({ count: targets.length, targets });
+    } catch (error) {
+        console.error("Error fetching broadcast targets:", error);
+        res.status(500).json({ message: "Server error fetching targets" });
+    }
 };
 
 // @desc    Send Bulk Email to Waiting List
@@ -55,18 +60,18 @@ export const sendBulkEmail = async (req, res) => {
 export const sendBulkWhatsApp = async (req, res) => {
     const { message } = req.body;
 
-    // 1. Fetch leads who opted in for WhatsApp
-    const leads = await Inquiry.find({
-        status: "Waiting List",
-        whatsappOptIn: true,
-        phone: { $exists: true, $ne: "" }
-    });
-
-    if (leads.length === 0) {
-        return res.status(404).json({ message: "No valid WhatsApp numbers found." });
-    }
-
     try {
+        // 1. Fetch leads who opted in for WhatsApp
+        const leads = await Inquiry.find({
+            status: "Waiting List",
+            whatsappOptIn: true,
+            phone: { $exists: true, $ne: "" }
+        });
+
+        if (leads.length === 0) {
+            return res.status(404).json({ message: "No valid WhatsApp numbers found." });
+        }
+
         // 2. The WhatsApp API Loop (Ready for Twilio / Meta Cloud API integration)
         await Promise.all(
             leads.map(async (lead) => {

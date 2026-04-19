@@ -7,7 +7,7 @@ import PDFDocument from "pdfkit";
 // @access  Private (Super Admin Only)
 export const exportClientsToExcel = async (req, res) => {
     try {
-        const clients = await Client.find({}).populate("targetCollege", "name");
+        const clients = await Client.find({});
 
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Client Database");
@@ -31,9 +31,9 @@ export const exportClientsToExcel = async (req, res) => {
                 name: client.name,
                 phone: client.phone,
                 status: client.admissionStatus,
-                college: client.targetCollege ? client.targetCollege.name : "Not Assigned",
-                totalFee: client.financials.totalAgreedAmount,
-                amountPaid: client.financials.amountPaid,
+                college: client.targetColleges && client.targetColleges.length > 0 ? client.targetColleges[0] : "Not Assigned",
+                totalFee: client.financials?.totalAgreedAmount ?? 0,
+                amountPaid: client.financials?.amountPaid ?? 0,
             });
         });
 
@@ -54,7 +54,7 @@ export const exportClientsToExcel = async (req, res) => {
 // @access  Private (Super Admin Only)
 export const exportClientsToPDF = async (req, res) => {
     try {
-        const clients = await Client.find({}).populate("targetCollege", "name");
+        const clients = await Client.find({});
 
         // Initialize the PDF document
         const doc = new PDFDocument({ margin: 50 });
@@ -74,15 +74,17 @@ export const exportClientsToPDF = async (req, res) => {
 
         // Loop through clients and format them nicely
         clients.forEach((client, index) => {
-            const collegeName = client.targetCollege ? client.targetCollege.name : "Not Assigned";
-            const balance = client.financials.totalAgreedAmount - client.financials.amountPaid;
+            const collegeName = client.targetColleges && client.targetColleges.length > 0 ? client.targetColleges[0] : "Not Assigned";
+            const totalAgreed = client.financials?.totalAgreedAmount ?? 0;
+            const amountPaid = client.financials?.amountPaid ?? 0;
+            const balance = totalAgreed - amountPaid;
 
             doc.fontSize(14).text(`${index + 1}. ${client.name}`, { underline: true });
             doc.fontSize(12)
                 .text(`Phone: ${client.phone}`)
                 .text(`Status: ${client.admissionStatus}`)
                 .text(`Target College: ${collegeName}`)
-                .text(`Financials: Total: ₹${client.financials.totalAgreedAmount} | Paid: ₹${client.financials.amountPaid} | Balance: ₹${balance}`);
+                .text(`Financials: Total: ₹${totalAgreed} | Paid: ₹${amountPaid} | Balance: ₹${balance}`);
 
             doc.moveDown(); // Space between clients
         });

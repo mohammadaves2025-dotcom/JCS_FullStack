@@ -45,7 +45,10 @@ export const loginUser = async (req, res) => {
 // @access  Public
 export const registerUser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password } = req.body;
+        // 🔒 SECURITY FIX: never trust the role from a public request body.
+        // Public self-registration is always "student". Use /register-staff for other roles.
+        const role = "student";
 
         if (!name || !email || !password) {
             return res.status(400).json({ message: "Name, email, and password are required" });
@@ -64,7 +67,7 @@ export const registerUser = async (req, res) => {
             name: name.trim(),
             email: normalizedEmail,
             password,
-            role: role || "student",
+            role,
         });
 
         const token = generateToken(res, user._id);

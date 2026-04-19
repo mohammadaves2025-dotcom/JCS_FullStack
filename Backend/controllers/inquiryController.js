@@ -43,12 +43,16 @@ export const createInquiry = async (req, res) => {
 // @access  Private (Staff/Admin)
 
 export const getInquiries = async (req, res) => {
+    try {
+        // If the admin clicks a filter like "?status=New" on the frontend
+        const filter = req.query.status ? { status: req.query.status } : {};
 
-    // If the admin clicks a filter like "?status=New" on the frontend
-    const filter = req.query.status ? { status: req.query.status } : {};
-
-    const inquiries = await Inquiry.find(filter).sort({ createdAt: -1 });
-    res.status(200).json(inquiries);
+        const inquiries = await Inquiry.find(filter).sort({ createdAt: -1 });
+        res.status(200).json(inquiries);
+    } catch (error) {
+        console.error("Error fetching inquiries:", error);
+        res.status(500).json({ message: "Server error fetching inquiries" });
+    }
 };
 
 // @desc    Get today's follow-ups for the Smart Reminder System
@@ -57,17 +61,21 @@ export const getInquiries = async (req, res) => {
 
 
 export const getTodayFollowUps = async (req, res) => {
+    try {
+        // Find inquiries in the Waiting List where the follow-up date is today or in the past
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
 
-    // Find inquiries in the Waiting List where the follow-up date is today or in the past
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
+        const followUps = await Inquiry.find({
+            status: "Waiting List",
+            nextFollowUpDate: { $lte: new Date() } // Less than or equal to current time
+        }).sort({ nextFollowUpDate: 1 });
 
-    const followUps = await Inquiry.find({
-        status: "Waiting List",
-        nextFollowUpDate: { $lte: new Date() } // Less than or equal to current time
-    }).sort({ nextFollowUpDate: 1 });
-
-    res.status(200).json(followUps);
+        res.status(200).json(followUps);
+    } catch (error) {
+        console.error("Error fetching follow-ups:", error);
+        res.status(500).json({ message: "Server error fetching follow-ups" });
+    }
 };
 
 // @desc    Update inquiry details (Admin jotting notes or changing follow-up date)
@@ -128,7 +136,7 @@ export const convertInquiryToClient = async (req, res) => {
             phone: inquiry.phone,
             email: inquiry.email,
             targetCourse: inquiry.interestedCourse,
-            admissionStatus: "Documents Pending",
+            admissionStatus: "COLLEGE FORM APPLIED",
         });
 
         // 3. USER ACCOUNT CREATION
@@ -152,7 +160,7 @@ export const convertInquiryToClient = async (req, res) => {
             const loginURL = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/login`;
 
             const htmlEmail = `
-                <div style="font-family: Arial, sans-serif; max-w: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
                     <h2 style="color: #111827;">Welcome to Jamia Consultancy Services! 🎉</h2>
                     <p style="color: #4B5563; font-size: 16px;">Hi ${inquiry.name.split(' ')[0]},</p>
                     <p style="color: #4B5563; font-size: 16px;">Your secure Admission Portal has been successfully created. You can now log in to track your application status, view your financial ledger, and securely upload your required documents.</p>

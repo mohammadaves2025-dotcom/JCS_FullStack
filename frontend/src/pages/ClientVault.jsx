@@ -183,7 +183,19 @@ const ClientVault = () => {
                                 <div className="min-w-0">
                                     <h3 className="text-lg font-black text-gray-900 group-hover:text-jcs-deep transition-colors tracking-tight truncate">{client.name}</h3>
                                     <p className="text-xs text-gray-400 font-bold">{client.phone}</p>
+
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <p className="text-xs text-gray-500 font-bold">{client.phone}</p>
+                                        {client.targetCourse && (
+                                            <>
+                                                <span className="text-gray-300">•</span>
+                                                <span className="text-xs font-black text-jcs-brand uppercase tracking-wider">{client.targetCourse}</span>
+                                            </>
+                                        )}
+                                    </div>
+                                    
                                     <p className="text-[10px] text-gray-400 font-bold mt-1">
+                
                                         Update: {new Date(client.updatedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
                                     </p>
                                 </div>

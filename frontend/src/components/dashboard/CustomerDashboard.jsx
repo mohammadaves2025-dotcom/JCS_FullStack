@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { createPortal } from 'react-dom'; // 👈 Imported createPortal
+import { createPortal } from 'react-dom';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 import {
@@ -19,6 +19,11 @@ const buildWhatsAppText = (client) => {
     text += `👤 *Name:* ${client.name}\n`;
     text += `📞 *Phone:* ${client.phone}\n`;
     text += `📧 *Email:* ${client.email}\n`;
+
+    if (client.guardianDetails?.name) {
+        text += `👨‍👩‍👦 *Guardian:* ${client.guardianDetails.name} (${client.guardianDetails.phone || 'No Contact'})\n`;
+    }
+
     if (client.bloodGroup) text += `🩸 *Blood Group:* ${client.bloodGroup}\n`;
     if (client.socialCategory) text += `🏷 *Category:* ${client.socialCategory}\n`;
     if (client.address) text += `🏠 *Address:* ${client.address}\n`;
@@ -32,6 +37,7 @@ const buildWhatsAppText = (client) => {
     text += `• Total Fee: ₹${total.toLocaleString('en-IN')}\n`;
     text += `• Paid: ₹${paid.toLocaleString('en-IN')}\n`;
     text += `• Due: ₹${due.toLocaleString('en-IN')}\n`;
+
     if (client.documents?.length) {
         text += `\n${sep}\n`;
         text += `📁 *Documents Uploaded (${client.documents.length})*\n`;
@@ -58,7 +64,12 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     const [editSocialCategory, setEditSocialCategory] = useState('');
     const [editAddress, setEditAddress] = useState('');
 
-    // 🟢 University accounts state
+    // Guardian States
+    const [editGuardianName, setEditGuardianName] = useState('');
+    const [editGuardianPhone, setEditGuardianPhone] = useState('');
+    const [editGuardianEmail, setEditGuardianEmail] = useState('');
+
+    // University accounts state
     const [universityAccounts, setUniversityAccounts] = useState([]);
     const [newAccount, setNewAccount] = useState({ universityName: '', portalUrl: '', username: '', password: '', notes: '' });
     const [addingAccount, setAddingAccount] = useState(false);
@@ -66,14 +77,20 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
 
     useEffect(() => {
         if (client) {
-            setEditFinancials({ totalAgreedAmount: client.financials?.totalAgreedAmount || 0, amountPaid: client.financials?.amountPaid || 0 });
+            setEditFinancials({
+                totalAgreedAmount: client.financials?.totalAgreedAmount || 0,
+                amountPaid: client.financials?.amountPaid || 0
+            });
             setEditColleges(client.targetColleges?.join(', ') || '');
             setEditCourse(client.targetCourse || '');
-            setAdmissionStatus(client.admissionStatus || 'Documents Pending');
+            setAdmissionStatus(client.admissionStatus || 'COLLEGE FORM APPLIED');
             setEditBloodGroup(client.bloodGroup || '');
             setEditSocialCategory(client.socialCategory || 'General');
             setEditAddress(client.address || '');
             setUniversityAccounts(client.universityAccounts || []);
+            setEditGuardianName(client.guardianDetails?.name || '');
+            setEditGuardianPhone(client.guardianDetails?.phone || '');
+            setEditGuardianEmail(client.guardianDetails?.email || '');
         }
     }, [client]);
 
@@ -82,21 +99,27 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
             await axios.put(`/api/clients/${client._id}`, updates, { withCredentials: true });
             refreshClients();
             if (!silent) alert("Profile updated successfully!");
-        } catch (error) {
-            alert("Failed to update client profile.");
+        } catch (err) {
+            console.error("Save error:", err);
+            if (!silent) alert("Failed to update client profile.");
         }
     };
 
     const handleFileUpload = async (e, docType, isProfilePic = false) => {
         const file = e.target.files[0];
         if (!file) return;
-        if (!isProfilePic && docType === 'Custom' && !customDocName.trim()) return alert("Please enter a name for this document!");
+        if (!isProfilePic && docType === 'Custom' && !customDocName.trim()) {
+            return alert("Please enter a name for this document!");
+        }
 
         const formData = new FormData();
         formData.append('document', file);
         setUploadingDoc(true);
         try {
-            const uploadRes = await axios.post('/api/upload', formData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
+            const uploadRes = await axios.post('/api/upload', formData, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             if (isProfilePic) {
                 await saveClientDetails({ profilePhoto: uploadRes.data.url }, true);
             } else {
@@ -105,14 +128,14 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                 await saveClientDetails({ documents: [...(client.documents || []), newDoc] }, true);
                 setCustomDocName('');
             }
-        } catch {
+        } catch (err) {
+            console.error("Upload error:", err);
             alert("Upload failed. Max 5MB.");
         } finally {
             setUploadingDoc(false);
         }
     };
 
-    // ─── Copy to Clipboard / WhatsApp ─────────────────────────────────────────
     const handleCopyForWhatsApp = () => {
         const text = buildWhatsAppText(client);
         navigator.clipboard.writeText(text).then(() => {
@@ -126,7 +149,6 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
         window.open(`https://wa.me/?text=${text}`, '_blank');
     };
 
-    // ─── University Accounts ───────────────────────────────────────────────────
     const handleAddUniversityAccount = async () => {
         if (!newAccount.universityName.trim()) return alert("University name is required.");
         const updated = [...universityAccounts, { ...newAccount, createdAt: new Date() }];
@@ -146,18 +168,17 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     const TABS = [
         { id: 'profile', label: 'Profile' },
         { id: 'documents', label: 'Documents' },
-        { id: 'university', label: `University Accounts ${universityAccounts.length > 0 ? `(${universityAccounts.length})` : ''}` },
+        { id: 'university', label: `University Accounts${universityAccounts.length > 0 ? ` (${universityAccounts.length})` : ''}` },
     ];
 
-    // 👈 Define the content to be teleported via Portal
     const dashboardContent = (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-gray-900/70 backdrop-blur-sm">
             <div className="bg-gray-50 rounded-[2rem] w-full max-w-7xl h-[92vh] overflow-hidden shadow-2xl flex flex-col animate-fade-in-up border border-white/20">
 
-                {/* ── Header ─────────────────────────────────────────────────── */}
+                {/* ── Header ── */}
                 <div className="px-8 py-5 bg-white border-b border-gray-200 flex justify-between items-center shrink-0">
+                    {/* Left: Avatar + Name */}
                     <div className="flex items-center gap-5">
-                        {/* Avatar */}
                         <div className="relative group/avatar cursor-pointer w-14 h-14 shrink-0">
                             {client.profilePhoto ? (
                                 <img src={client.profilePhoto} alt="Profile" className="w-full h-full rounded-2xl object-cover shadow-sm border border-gray-100" />
@@ -168,7 +189,13 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                             )}
                             <label className="absolute inset-0 bg-black/60 rounded-2xl opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center text-white transition-opacity cursor-pointer backdrop-blur-sm">
                                 <FiCamera size={18} />
-                                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'photo', true)} disabled={uploadingDoc} />
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handleFileUpload(e, 'profilePhoto', true)}
+                                    disabled={uploadingDoc}
+                                />
                             </label>
                         </div>
                         <div>
@@ -176,50 +203,56 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                             <div className="flex flex-wrap gap-3 mt-0.5 text-xs font-semibold text-gray-500">
                                 <span className="flex items-center gap-1"><FiPhone className="text-gray-400" size={11} /> {client.phone}</span>
                                 {client.email && <span className="flex items-center gap-1"><FiMail className="text-gray-400" size={11} /> {client.email}</span>}
-                                {editSocialCategory && <span className="bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase">{editSocialCategory}</span>}
+                                {editSocialCategory && (
+                                    <span className="bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase">{editSocialCategory}</span>
+                                )}
                             </div>
                         </div>
                     </div>
 
+                    {/* Right: Actions */}
                     <div className="flex items-center gap-3">
-                        {/* 🟢 WhatsApp Share Button */}
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={handleCopyForWhatsApp}
-                                title="Copy details to clipboard"
-                                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border shadow-sm ${copied ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-700 border-gray-200 hover:border-jcs-brand hover:text-jcs-brand'}`}
-                            >
-                                {copied ? <><FiCheck size={14} /> Copied!</> : <><FiCopy size={14} /> Copy</>}
-                            </button>
-                            <button
-                                onClick={handleOpenWhatsApp}
-                                title="Share on WhatsApp"
-                                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-[#25D366] text-white hover:bg-[#1ebe57] transition-all shadow-sm"
-                            >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                                Share
-                            </button>
-                        </div>
+                        <button
+                            onClick={handleCopyForWhatsApp}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border shadow-sm ${copied ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-700 border-gray-200 hover:border-jcs-brand hover:text-jcs-brand'}`}
+                        >
+                            {copied ? <><FiCheck size={14} /> Copied!</> : <><FiCopy size={14} /> Copy</>}
+                        </button>
 
-                        {/* Status */}
+                        <button
+                            onClick={handleOpenWhatsApp}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-[#25D366] text-white hover:bg-[#1ebe57] transition-all shadow-sm"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                            </svg>
+                            Share
+                        </button>
+
                         <select
                             value={admissionStatus}
-                            onChange={(e) => { setAdmissionStatus(e.target.value); saveClientDetails({ admissionStatus: e.target.value }, true); }}
-                            className={`px-4 py-2.5 rounded-xl font-bold text-sm border-0 shadow-sm cursor-pointer focus:ring-4 focus:ring-jcs-brand/20 transition-all ${admissionStatus === 'Seat Confirmed' ? 'bg-green-100 text-green-700' : 'bg-white text-gray-700 border border-gray-200'}`}
+                            onChange={(e) => {
+                                setAdmissionStatus(e.target.value);
+                                saveClientDetails({ admissionStatus: e.target.value }, true);
+                            }}
+                            className={`px-4 py-2.5 rounded-xl font-bold text-sm border shadow-sm cursor-pointer focus:ring-4 focus:ring-jcs-brand/20 focus:outline-none transition-all ${admissionStatus === 'SEAT CONFIRMED' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-700 border-gray-200'}`}
                         >
-                            <option>Documents Pending</option>
-                            <option>Documents Verified</option>
-                            <option>College Applied</option>
-                            <option>Seat Confirmed</option>
+                            <option>COLLEGE FORM APPLIED</option>
+                            <option>WAITING FOR ALLOTMENT</option>
+                            <option>SEAT CONFIRMED</option>
+                            <option>PAYMENT</option>
                         </select>
 
-                        <button onClick={onClose} className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors shadow-sm">
+                        <button
+                            onClick={onClose}
+                            className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors shadow-sm"
+                        >
                             <FiX size={18} />
                         </button>
                     </div>
                 </div>
 
-                {/* ── Tab Bar ────────────────────────────────────────────────── */}
+                {/* ── Tab Bar ── */}
                 <div className="px-8 bg-white border-b border-gray-100 flex gap-1 shrink-0">
                     {TABS.map(tab => (
                         <button
@@ -232,140 +265,219 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                     ))}
                 </div>
 
-                {/* ── Body ───────────────────────────────────────────────────── */}
+                {/* ── Body ── */}
                 <div className="flex-1 overflow-y-auto p-8 hide-scrollbar">
 
                     {/* ════════ TAB: PROFILE ════════ */}
                     {activeTab === 'profile' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                            {/* Column 1: Personal */}
+                            {/* Column 1: Personal + Guardian */}
                             <div className="space-y-6">
-
-                                {/* Medical / Personal Profile */}
                                 <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                                     <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
                                         <FiHeart className="text-red-400" /> Personal Profile
                                     </h3>
                                     <div className="space-y-4">
-
-                                        {/* Blood Group */}
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Blood Group</label>
                                             <div className="flex gap-2">
-                                                <select value={editBloodGroup} onChange={(e) => setEditBloodGroup(e.target.value)}
-                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand text-gray-900 cursor-pointer">
+                                                <select
+                                                    value={editBloodGroup}
+                                                    onChange={(e) => setEditBloodGroup(e.target.value)}
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand text-gray-900 cursor-pointer"
+                                                >
                                                     <option value="">Select...</option>
                                                     {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(b => <option key={b}>{b}</option>)}
                                                 </select>
-                                                <button onClick={() => saveClientDetails({ bloodGroup: editBloodGroup })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm">Save</button>
+                                                <button
+                                                    onClick={() => saveClientDetails({ bloodGroup: editBloodGroup })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
                                             </div>
                                         </div>
-
-                                        {/* 🟢 Social Category */}
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Social Category</label>
                                             <div className="flex gap-2">
-                                                <select value={editSocialCategory} onChange={(e) => setEditSocialCategory(e.target.value)}
-                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand text-gray-900 cursor-pointer">
+                                                <select
+                                                    value={editSocialCategory}
+                                                    onChange={(e) => setEditSocialCategory(e.target.value)}
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-sm focus:outline-none focus:border-jcs-brand text-gray-900 cursor-pointer"
+                                                >
                                                     {['General', 'OBC', 'OBC-NCL', 'SC', 'ST', 'EWS'].map(cat => <option key={cat}>{cat}</option>)}
                                                 </select>
-                                                <button onClick={() => saveClientDetails({ socialCategory: editSocialCategory })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm">Save</button>
+                                                <button
+                                                    onClick={() => saveClientDetails({ socialCategory: editSocialCategory })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
                                             </div>
                                         </div>
-
-                                        {/* Address */}
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Address</label>
                                             <div className="flex gap-2">
-                                                <textarea value={editAddress} onChange={(e) => setEditAddress(e.target.value)} rows={2} placeholder="Enter address..."
-                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand resize-none" />
-                                                <button onClick={() => saveClientDetails({ address: editAddress })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm self-start">Save</button>
+                                                <textarea
+                                                    value={editAddress}
+                                                    onChange={(e) => setEditAddress(e.target.value)}
+                                                    rows={2}
+                                                    placeholder="Enter address..."
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand resize-none"
+                                                />
+                                                <button
+                                                    onClick={() => saveClientDetails({ address: editAddress })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm self-start"
+                                                >
+                                                    Save
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Academic Targets */}
+                                {/* Guardian Card */}
                                 <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2"><FiBookOpen /> Academic Targets</h3>
-                                    <div className="mb-5">
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Opted Course</label>
-                                        <div className="flex gap-2">
-                                            <input type="text" value={editCourse} onChange={(e) => setEditCourse(e.target.value)} placeholder="e.g. MBBS Abroad"
-                                                className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
-                                            <button onClick={() => saveClientDetails({ targetCourse: editCourse })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm">Save</button>
+                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                        <FiUser className="text-blue-400" /> Guardian Details
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Full Name</label>
+                                            <input
+                                                type="text"
+                                                value={editGuardianName}
+                                                onChange={(e) => setEditGuardianName(e.target.value)}
+                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                placeholder="Father/Mother Name"
+                                            />
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Target Colleges (Comma Separated)</label>
-                                        <div className="flex gap-2">
-                                            <input type="text" value={editColleges} onChange={(e) => setEditColleges(e.target.value)} placeholder="e.g. Tbilisi State University"
-                                                className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
-                                            <button onClick={() => saveClientDetails({ targetColleges: editColleges.split(',').map(c => c.trim()).filter(Boolean) })} className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm">Save</button>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Phone</label>
+                                                <input
+                                                    type="text"
+                                                    value={editGuardianPhone}
+                                                    onChange={(e) => setEditGuardianPhone(e.target.value)}
+                                                    className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                    placeholder="Contact No"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Email</label>
+                                                <input
+                                                    type="email"
+                                                    value={editGuardianEmail}
+                                                    onChange={(e) => setEditGuardianEmail(e.target.value)}
+                                                    className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                    placeholder="Email ID"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="mt-3 flex flex-wrap gap-2">
-                                            {client.targetColleges?.map((col, i) => (
-                                                <span key={i} className="bg-jcs-brand/10 text-jcs-brand text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider">{col}</span>
-                                            ))}
-                                        </div>
+                                        <button
+                                            onClick={() => saveClientDetails({ guardianDetails: { name: editGuardianName, phone: editGuardianPhone, email: editGuardianEmail } })}
+                                            className="w-full bg-gray-900 text-white font-black py-3 rounded-xl hover:bg-jcs-brand transition-all text-sm shadow-md"
+                                        >
+                                            Update Guardian
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Column 2: Financials (super-admin) + Copy Preview */}
+                            {/* Column 2: Academic + Financial */}
                             <div className="space-y-6">
+                                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                        <FiBookOpen /> Academic Targets
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Opted Course</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={editCourse}
+                                                    onChange={(e) => setEditCourse(e.target.value)}
+                                                    placeholder="e.g. MBBS Abroad"
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                />
+                                                <button
+                                                    onClick={() => saveClientDetails({ targetCourse: editCourse })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Target Colleges</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={editColleges}
+                                                    onChange={(e) => setEditColleges(e.target.value)}
+                                                    placeholder="Comma separated"
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                />
+                                                <button
+                                                    onClick={() => saveClientDetails({ targetColleges: editColleges.split(',').map(c => c.trim()).filter(Boolean) })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {user?.role === 'super-admin' && (
                                     <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
                                         <div className="absolute top-0 right-0 w-32 h-32 bg-jcs-brand/5 rounded-full blur-2xl"></div>
-                                        <h3 className="text-xs font-black text-jcs-deep uppercase tracking-widest mb-5 flex items-center gap-2 relative z-10"><FiDollarSign /> Financial Ledger</h3>
+                                        <h3 className="text-xs font-black text-jcs-deep uppercase tracking-widest mb-5 flex items-center gap-2 relative z-10">
+                                            <FiDollarSign /> Financial Ledger
+                                        </h3>
                                         <div className="space-y-4 mb-5 relative z-10">
                                             <div>
                                                 <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Total Agreed Fee (₹)</label>
-                                                <input type="number" value={editFinancials.totalAgreedAmount} onChange={(e) => setEditFinancials({ ...editFinancials, totalAgreedAmount: e.target.value })} className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-black text-gray-900" />
+                                                <input
+                                                    type="number"
+                                                    value={editFinancials.totalAgreedAmount}
+                                                    onChange={(e) => setEditFinancials({ ...editFinancials, totalAgreedAmount: Number(e.target.value) })}
+                                                    className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 font-black text-gray-900 focus:outline-none focus:border-jcs-brand"
+                                                />
                                             </div>
                                             <div>
                                                 <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Amount Collected (₹)</label>
-                                                <input type="number" value={editFinancials.amountPaid} onChange={(e) => setEditFinancials({ ...editFinancials, amountPaid: e.target.value })} className="w-full p-3 rounded-xl bg-green-50 border border-green-200 font-black text-green-700" />
+                                                <input
+                                                    type="number"
+                                                    value={editFinancials.amountPaid}
+                                                    onChange={(e) => setEditFinancials({ ...editFinancials, amountPaid: Number(e.target.value) })}
+                                                    className="w-full p-3 rounded-xl bg-green-50 border border-green-200 font-black text-green-700 focus:outline-none focus:border-green-400"
+                                                />
                                             </div>
                                         </div>
                                         <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-100 relative z-10 mb-4">
                                             <span className="text-xs font-bold text-gray-500">Balance Due:</span>
-                                            <span className="text-lg font-black text-red-500">₹{(editFinancials.totalAgreedAmount - editFinancials.amountPaid).toLocaleString('en-IN')}</span>
+                                            <span className="text-lg font-black text-red-500">
+                                                ₹{(editFinancials.totalAgreedAmount - editFinancials.amountPaid).toLocaleString('en-IN')}
+                                            </span>
                                         </div>
                                         <button
-                                            onClick={() => saveClientDetails({ totalAgreedAmount: editFinancials.totalAgreedAmount, amountPaid: editFinancials.amountPaid })}
+                                            onClick={() => saveClientDetails({ financials: { totalAgreedAmount: editFinancials.totalAgreedAmount, amountPaid: editFinancials.amountPaid } })}
                                             className="w-full bg-jcs-deep text-white font-extrabold py-3 rounded-xl shadow-md hover:bg-gray-900 transition-colors relative z-10"
-                                        >Update Ledger</button>
+                                        >
+                                            Update Ledger
+                                        </button>
                                     </div>
                                 )}
-
-                                {/* 🟢 WhatsApp Copy Card */}
-                                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                                        Share via WhatsApp
-                                    </h3>
-                                    <p className="text-xs text-gray-500 font-medium mb-4 leading-relaxed">
-                                        Send formatted student details to university partners instantly. Includes name, phone, course, category, financials, and documents.
-                                    </p>
-                                    <div className="flex gap-2">
-                                        <button onClick={handleCopyForWhatsApp}
-                                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all border ${copied ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'}`}>
-                                            {copied ? <><FiCheck size={14} /> Copied to Clipboard!</> : <><FiCopy size={14} /> Copy Text</>}
-                                        </button>
-                                        <button onClick={handleOpenWhatsApp}
-                                            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm bg-[#25D366] text-white hover:bg-[#1ebe57] transition-all">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                                            Open WhatsApp
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
 
-                            {/* Column 3: Interaction log placeholder / stats */}
+                            {/* Column 3: Quick Stats */}
                             <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2"><FiTarget /> Quick Stats</h3>
+                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                    <FiTarget /> Quick Stats
+                                </h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     {[
                                         { label: 'Docs Uploaded', value: client.documents?.length || 0, color: 'bg-blue-50 text-blue-700' },
@@ -387,42 +499,76 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                     {activeTab === 'documents' && (
                         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
                             <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2"><FiFolder /> Document Vault</h3>
-                                {uploadingDoc && <span className="text-[10px] font-black text-jcs-brand animate-pulse bg-jcs-brand/10 px-3 py-1.5 rounded-full uppercase">Uploading...</span>}
+                                <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                    <FiFolder /> Document Vault
+                                </h3>
+                                {uploadingDoc && (
+                                    <span className="text-[10px] font-black text-jcs-brand animate-pulse bg-jcs-brand/10 px-3 py-1.5 rounded-full uppercase">
+                                        Uploading...
+                                    </span>
+                                )}
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 {client.documents?.map((doc, idx) => (
                                     <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-green-100 bg-green-50/50 hover:bg-green-50 transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center"><FiCheckCircle size={18} /></div>
-                                            <span className="font-bold text-sm text-gray-900 truncate max-w-[140px]" title={doc.docType}>{doc.docType}</span>
+                                            <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
+                                                <FiCheckCircle size={18} />
+                                            </div>
+                                            <span className="font-bold text-sm text-gray-900 truncate max-w-[140px]">{doc.docType}</span>
                                         </div>
-                                        <a href={doc.url} target="_blank" rel="noreferrer" className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-white px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-50 transition-colors flex items-center gap-1.5">
+                                        <a
+                                            href={doc.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-white px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-50 transition-colors flex items-center gap-1.5"
+                                        >
                                             Open <FiExternalLink size={12} />
                                         </a>
                                     </div>
                                 ))}
-                                {['10th Marksheet', '12th Marksheet', 'Aadhar Card', 'Passport Photo'].filter(type => !client.documents?.some(d => d.docType === type)).map(docType => (
-                                    <div key={docType} className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-gray-300 bg-gray-50/50 hover:bg-gray-50 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 text-gray-400 flex items-center justify-center"><FiFileText size={18} /></div>
-                                            <span className="font-bold text-sm text-gray-500">{docType}</span>
+                                {['10th Marksheet', '12th Marksheet', 'Aadhar Card', 'Passport Photo']
+                                    .filter(type => !client.documents?.some(d => d.docType === type))
+                                    .map(docType => (
+                                        <div key={docType} className="flex items-center justify-between p-4 rounded-2xl border border-dashed border-gray-300 bg-gray-50/50 hover:bg-gray-50 transition-colors">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 text-gray-400 flex items-center justify-center">
+                                                    <FiFileText size={18} />
+                                                </div>
+                                                <span className="font-bold text-sm text-gray-500">{docType}</span>
+                                            </div>
+                                            <label className="cursor-pointer text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:border-jcs-brand hover:text-jcs-brand shadow-sm transition-all">
+                                                Upload
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf, image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handleFileUpload(e, docType)}
+                                                    disabled={uploadingDoc}
+                                                />
+                                            </label>
                                         </div>
-                                        <label className="cursor-pointer text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-gray-700 hover:border-jcs-brand hover:text-jcs-brand shadow-sm transition-all">
-                                            Upload
-                                            <input type="file" accept=".pdf, image/*" className="hidden" onChange={(e) => handleFileUpload(e, docType)} disabled={uploadingDoc} />
-                                        </label>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
                             <div className="pt-5 border-t border-gray-100 bg-gray-50 p-4 rounded-2xl">
                                 <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Upload Additional Document</h4>
                                 <div className="flex gap-3">
-                                    <input type="text" value={customDocName} onChange={(e) => setCustomDocName(e.target.value)} placeholder="e.g. Migration Certificate"
-                                        className="flex-1 p-3 rounded-xl bg-white border border-gray-200 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-jcs-brand/20" />
+                                    <input
+                                        type="text"
+                                        value={customDocName}
+                                        onChange={(e) => setCustomDocName(e.target.value)}
+                                        placeholder="e.g. Migration Certificate"
+                                        className="flex-1 p-3 rounded-xl bg-white border border-gray-200 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-jcs-brand/20"
+                                    />
                                     <label className={`cursor-pointer flex items-center justify-center gap-2 px-5 rounded-xl font-bold text-sm transition-all ${customDocName ? 'bg-gray-900 text-white hover:bg-jcs-brand shadow-md' : 'bg-gray-200 text-gray-400 pointer-events-none'}`}>
                                         <FiUploadCloud size={16} /> Browse
-                                        <input type="file" accept=".pdf, image/*" className="hidden" onChange={(e) => handleFileUpload(e, 'Custom')} disabled={uploadingDoc || !customDocName} />
+                                        <input
+                                            type="file"
+                                            accept=".pdf, image/*"
+                                            className="hidden"
+                                            onChange={(e) => handleFileUpload(e, 'Custom')}
+                                            disabled={uploadingDoc || !customDocName}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -437,123 +583,148 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                     <h3 className="text-sm font-black text-gray-900">University Portal Accounts</h3>
                                     <p className="text-xs text-gray-500 font-medium mt-1">Store login credentials for university admission portals</p>
                                 </div>
-                                <button onClick={() => setAddingAccount(true)}
-                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-jcs-deep text-white font-bold text-sm hover:bg-gray-900 transition-colors shadow-sm">
+                                <button
+                                    onClick={() => setAddingAccount(true)}
+                                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-jcs-deep text-white font-bold text-sm hover:bg-gray-900 transition-colors shadow-sm"
+                                >
                                     <FiPlus size={16} /> Add Account
                                 </button>
                             </div>
 
-                            {/* Add New Account Form */}
                             {addingAccount && (
                                 <div className="bg-white p-6 rounded-3xl border border-jcs-brand/20 shadow-sm animate-fade-in-up">
                                     <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5">New University Account</h4>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">University Name *</label>
-                                            <input type="text" value={newAccount.universityName} onChange={e => setNewAccount({ ...newAccount, universityName: e.target.value })} placeholder="e.g. Tbilisi State University"
-                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
+                                            <input
+                                                type="text"
+                                                value={newAccount.universityName}
+                                                onChange={e => setNewAccount({ ...newAccount, universityName: e.target.value })}
+                                                placeholder="e.g. Tbilisi State University"
+                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                            />
                                         </div>
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Portal URL</label>
-                                            <input type="url" value={newAccount.portalUrl} onChange={e => setNewAccount({ ...newAccount, portalUrl: e.target.value })} placeholder="https://admissions.university.edu"
-                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
+                                            <input
+                                                type="url"
+                                                value={newAccount.portalUrl}
+                                                onChange={e => setNewAccount({ ...newAccount, portalUrl: e.target.value })}
+                                                placeholder="https://..."
+                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                            />
                                         </div>
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Username / Email</label>
-                                            <input type="text" value={newAccount.username} onChange={e => setNewAccount({ ...newAccount, username: e.target.value })} placeholder="student@email.com"
-                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
+                                            <input
+                                                type="text"
+                                                value={newAccount.username}
+                                                onChange={e => setNewAccount({ ...newAccount, username: e.target.value })}
+                                                placeholder="student@email.com"
+                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                            />
                                         </div>
                                         <div>
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Password</label>
-                                            <input type="text" value={newAccount.password} onChange={e => setNewAccount({ ...newAccount, password: e.target.value })} placeholder="Account password"
-                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Notes (Optional)</label>
-                                            <input type="text" value={newAccount.notes} onChange={e => setNewAccount({ ...newAccount, notes: e.target.value })} placeholder="e.g. Application ID: AB123456"
-                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand focus:ring-1 focus:ring-jcs-brand" />
+                                            <input
+                                                type="text"
+                                                value={newAccount.password}
+                                                onChange={e => setNewAccount({ ...newAccount, password: e.target.value })}
+                                                placeholder="Account password"
+                                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                            />
                                         </div>
                                     </div>
                                     <div className="flex gap-3 mt-5">
-                                        <button onClick={handleAddUniversityAccount} className="bg-jcs-deep text-white font-bold px-6 py-3 rounded-xl hover:bg-jcs-brand transition-colors text-sm">Save Account</button>
-                                        <button onClick={() => setAddingAccount(false)} className="bg-gray-100 text-gray-600 font-bold px-6 py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm">Cancel</button>
+                                        <button
+                                            onClick={handleAddUniversityAccount}
+                                            className="bg-jcs-deep text-white font-bold px-6 py-3 rounded-xl hover:bg-jcs-brand transition-colors text-sm"
+                                        >
+                                            Save Account
+                                        </button>
+                                        <button
+                                            onClick={() => setAddingAccount(false)}
+                                            className="bg-gray-100 text-gray-600 font-bold px-6 py-3 rounded-xl hover:bg-gray-200 transition-colors text-sm"
+                                        >
+                                            Cancel
+                                        </button>
                                     </div>
                                 </div>
                             )}
 
-                            {/* Accounts list */}
-                            {universityAccounts.length === 0 && !addingAccount ? (
-                                <div className="bg-white p-12 rounded-3xl border border-dashed border-gray-300 text-center">
-                                    <div className="text-4xl mb-4">🎓</div>
-                                    <h4 className="font-black text-gray-700 mb-2">No University Accounts Yet</h4>
-                                    <p className="text-sm text-gray-400 font-medium mb-5">Store login details for university admission portals so you can share them with partners.</p>
-                                    <button onClick={() => setAddingAccount(true)} className="bg-jcs-deep text-white font-bold px-6 py-3 rounded-xl hover:bg-jcs-brand transition-colors text-sm">
-                                        + Add First Account
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {universityAccounts.map((acc, idx) => (
-                                        <div key={idx} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg">🎓</div>
-                                                    <div>
-                                                        <h4 className="font-black text-gray-900 text-sm">{acc.universityName}</h4>
-                                                        {acc.portalUrl && (
-                                                            <a href={acc.portalUrl} target="_blank" rel="noreferrer" className="text-[10px] text-blue-500 font-bold flex items-center gap-1 hover:underline">
-                                                                <FiGlobe size={10} /> Visit Portal
-                                                            </a>
-                                                        )}
-                                                    </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {universityAccounts.map((acc, idx) => (
+                                    <div key={idx} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg">🎓</div>
+                                                <div>
+                                                    <h4 className="font-black text-gray-900 text-sm">{acc.universityName}</h4>
+                                                    {acc.portalUrl && (
+                                                        <a
+                                                            href={acc.portalUrl}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            className="text-[10px] text-blue-500 font-bold flex items-center gap-1 hover:underline"
+                                                        >
+                                                            <FiGlobe size={10} /> Visit Portal
+                                                        </a>
+                                                    )}
                                                 </div>
-                                                <button onClick={() => handleDeleteUniversityAccount(idx)} className="text-gray-400 hover:text-red-500 transition-colors p-1">
-                                                    <FiTrash2 size={14} />
-                                                </button>
                                             </div>
-                                            <div className="space-y-2">
-                                                {acc.username && (
-                                                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50">
-                                                        <span className="text-[10px] font-black text-gray-400 uppercase">Username</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-sm font-bold text-gray-700">{acc.username}</span>
-                                                            <button onClick={() => navigator.clipboard.writeText(acc.username)} className="text-gray-400 hover:text-jcs-brand transition-colors"><FiCopy size={12} /></button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {acc.password && (
-                                                    <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50">
-                                                        <span className="text-[10px] font-black text-gray-400 uppercase">Password</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-sm font-bold text-gray-700 font-mono">
-                                                                {showPasswords[idx] ? acc.password : '••••••••'}
-                                                            </span>
-                                                            <button onClick={() => setShowPasswords(p => ({ ...p, [idx]: !p[idx] }))} className="text-gray-400 hover:text-jcs-brand transition-colors">
-                                                                <FiLock size={12} />
-                                                            </button>
-                                                            <button onClick={() => navigator.clipboard.writeText(acc.password)} className="text-gray-400 hover:text-jcs-brand transition-colors"><FiCopy size={12} /></button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {acc.notes && (
-                                                    <div className="p-2.5 rounded-lg bg-yellow-50 border border-yellow-100">
-                                                        <span className="text-[10px] font-black text-yellow-600 uppercase block mb-0.5">Notes</span>
-                                                        <span className="text-xs font-semibold text-gray-700">{acc.notes}</span>
-                                                    </div>
-                                                )}
+                                            <button
+                                                onClick={() => handleDeleteUniversityAccount(idx)}
+                                                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                                            >
+                                                <FiTrash2 size={14} />
+                                            </button>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase">Username</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-gray-700">{acc.username}</span>
+                                                    <button
+                                                        onClick={() => navigator.clipboard.writeText(acc.username)}
+                                                        className="text-gray-400 hover:text-jcs-brand transition-colors"
+                                                    >
+                                                        <FiCopy size={12} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center justify-between p-2.5 rounded-lg bg-gray-50">
+                                                <span className="text-[10px] font-black text-gray-400 uppercase">Password</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-gray-700 font-mono">
+                                                        {showPasswords[idx] ? acc.password : '••••••••'}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => setShowPasswords(p => ({ ...p, [idx]: !p[idx] }))}
+                                                        className="text-gray-400 hover:text-jcs-brand transition-colors"
+                                                    >
+                                                        <FiLock size={12} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => navigator.clipboard.writeText(acc.password)}
+                                                        className="text-gray-400 hover:text-jcs-brand transition-colors"
+                                                    >
+                                                        <FiCopy size={12} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
+
                 </div>
             </div>
         </div>
     );
 
-    // 👈 4. Finally, return the created Portal instead of just the div!
     return createPortal(dashboardContent, document.body);
 };
 

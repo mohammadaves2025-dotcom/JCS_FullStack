@@ -2,9 +2,9 @@ import React from 'react';
 
 const Testimonials = () => {
     const stories = [
-        { name: "Adnan Khan", course: "B.Tech CSE", college: "Jamia Millia", img: "11", quote: "JCS helped me navigate the complex admission process. Their guidance on documentation was a lifesaver! Everything was transparent from day one." },
-        { name: "Sanya Sharma", course: "MBA", college: "Amity University", img: "12", quote: "I was confused between 3 universities. JCS gave me a clear comparison, handled the paperwork, and secured my seat in less than 48 hours." },
-        { name: "Rahul Verma", course: "MBBS", college: "Sharda University", img: "15", quote: "The portal tracking feature is amazing. I didn't have to call anyone to know my status; I just logged in and saw my offer letter ready to download." }
+        { name: "Adnan Khan", course: "MBBS", college: "Jamia Hamdard", img: "https://plus.unsplash.com/premium_photo-1682091992663-2e4f4a5534ba?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", quote: "JCS helped me navigate the complex admission process. Their guidance on documentation was a lifesaver! Everything was transparent from day one." },
+        { name: "Sanya Sharma", course: "MBA", college: "Amity University", img: "https://plus.unsplash.com/premium_photo-1682089810582-f7b200217b67?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW5kaWFuJTIwc3R1ZGVudHxlbnwwfHwwfHx8MA%3D%3D", quote: "I was confused between 3 universities. JCS gave me a clear comparison, handled the paperwork, and secured my seat." },
+        { name: "Rahul Verma", course: "MBBS", college: "Sharda University", img: "https://plus.unsplash.com/premium_photo-1683121727064-e151bd584a54?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", quote: "The portal tracking feature is amazing. I didn't have to call anyone to know my status; I just logged in and saw my offer letter ready to download." }
     ];
 
     return (
@@ -34,7 +34,7 @@ const Testimonials = () => {
                             
                             <div className="flex items-center gap-4 mb-6 relative z-10">
                                 <div className="w-12 h-12 rounded-full p-0.5 bg-white shadow-sm border border-gray-100 shrink-0">
-                                    <img src={`https://i.pravatar.cc/150?img=${story.img}`} className="w-full h-full rounded-full object-cover" alt={story.name} />
+                                    <img src={story.img} className="w-full h-full rounded-full object-cover" alt={story.name} />
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900 leading-none group-hover:text-jcs-brand transition-colors">{story.name}</h4>

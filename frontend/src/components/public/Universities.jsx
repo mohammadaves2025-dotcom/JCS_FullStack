@@ -41,6 +41,7 @@ const Universities = () => {
                                 Jamia Hamdard
                             </h4>
                             <p className="text-[11px] font-black text-gray-500 uppercase tracking-widest mt-2">New Delhi</p>
+                            <p className="text-[11px] font-black text-blue-500 uppercase tracking-widest mt-2">click here----</p>
                         </div>
                         <div className="bg-yellow-100 text-yellow-700 text-[10px] font-black px-3 py-1.5 rounded-lg border border-yellow-200 uppercase tracking-widest whitespace-nowrap shrink-0 group-hover:bg-yellow-200 transition-colors hidden sm:block">
                             Medical & Pharmacy

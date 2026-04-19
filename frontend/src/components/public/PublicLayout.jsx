@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FiPhone } from 'react-icons/fi';
+import { FiPhone, FiInstagram } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { NavLink, useLocation } from 'react-router-dom';
 import logo from '../../assets/JCS-LOGO1.jpeg';
+
 
 const PublicLayout = ({ children }) => {
     const [scrolled, setScrolled] = useState(false);
@@ -92,6 +93,20 @@ const PublicLayout = ({ children }) => {
                     <p className="text-sm text-gray-500 font-medium max-w-4xl leading-relaxed mb-10">
                         Every year, thousands of students compete for limited seats. Jamia Consultancy Services bridges the gap between ambition and reality by providing expert guidance for management quota and direct admissions across premium institutions. 100% transparent, secure, and hassle-free.
                     </p>
+
+                    {/* 🟢 New Instagram Integration */}
+                    <div className="mb-10">
+                        <a 
+                            href="https://www.instagram.com/jcs.delhi/" 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-gray-700 hover:text-white rounded-xl transition-all duration-300 font-bold text-sm shadow-sm border border-gray-200 hover:border-transparent group"
+                        >
+                            <FiInstagram size={18} className="group-hover:scale-110 transition-transform" /> 
+                            Follow us @jcs.delhi
+                        </a>
+                    </div>
+                    
                     <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-gray-400">
                         <p>Copyright © 2026, Jamia Consultancy Services.</p>
                         <div className="flex gap-6 items-center">

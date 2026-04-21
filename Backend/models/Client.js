@@ -9,7 +9,7 @@ const clientSchema = new mongoose.Schema({
   guardianDetails: {
     name: { type: String, default: "" },
     phone: { type: String, default: "" },
-    email: { type: String, default: "" }
+    email: { type: String, default: "" },
   },
 
   profilePhoto: { type: String, default: "" },

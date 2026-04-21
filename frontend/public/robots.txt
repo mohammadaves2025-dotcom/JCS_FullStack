@@ -1,0 +1,29 @@
+# ═══════════════════════════════════════════════════
+# robots.txt — JCS Consultancy (jcsconsultancy.in)
+# ═══════════════════════════════════════════════════
+
+User-agent: *
+Allow: /
+
+# Block admin & private routes from indexing
+Disallow: /admin
+Disallow: /admin/
+Disallow: /portal
+Disallow: /portal/
+Disallow: /login
+
+# Allow all major search engine bots explicitly
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Sitemap location
+Sitemap: https://jcsconsultancy.in/sitemap.xml

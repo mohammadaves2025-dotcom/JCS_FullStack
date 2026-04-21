@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PublicLayout from '../components/public/PublicLayout';
 import { FiMapPin, FiAward, FiUsers, FiBook, FiChevronDown, FiChevronUp, FiPhone, FiMail, FiStar, FiSearch, FiArrowRight } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useSEO } from '../hooks/useSEO';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -648,6 +649,20 @@ const ContactStrip = () => (
 
 // ─── PAGE ASSEMBLY ─────────────────────────────────────────────────────────────
 const JamiaHamdardPage = () => {
+    useSEO({
+        title: "Jamia Hamdard Admission 2026 | All Courses | JCS Consultancy",
+        description: "Complete admission guidance for Jamia Hamdard University — MBBS, B.Tech, MBA, BBA, Nursing, B.Pharm, Allied Health Sciences & more. NAAC A+ | NIRF #1 Pharmacy. Call JCS: 9990922119.",
+        canonical: "https://jcsconsultancy.in/jamia-hamdard",
+        keywords: "jamia hamdard admission, jamia hamdard courses, jamia hamdard university delhi, jamia hamdard mbbs nursing pharmacy btech",
+        schema: {
+            "@context": "https://schema.org",
+            "@type": "EducationalOrganization",
+            "name": "Hamdard University (Jamia Hamdard)",
+            "description": "NAAC A+ accredited deemed university in New Delhi. Top ranked in Pharmacy (NIRF #1). Offers MBBS, Nursing, Pharmacy, Engineering, Management & Allied Health courses.",
+            "url": "https://jcsconsultancy.in/jamia-hamdard",
+            "address": { "@type": "PostalAddress", "addressLocality": "New Delhi", "addressRegion": "Delhi", "addressCountry": "IN" },
+        }
+    });
     return (
         <PublicLayout>
             <Hero />

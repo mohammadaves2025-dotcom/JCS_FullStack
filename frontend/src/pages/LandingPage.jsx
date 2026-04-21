@@ -7,8 +7,22 @@ import Testimonials from '../components/public/Testimonials';
 import UniversityLogos from '../components/public/UniversityLogos';
 import { useEffect } from 'react';
 import Choose from '../components/public/Choose';
+import { useSEO } from '../hooks/useSEO';
 
 const LandingPage = () => {
+    useSEO({
+        title: "JCS Consultancy | Jamia Hamdard, MBBS, B.Tech & Delhi College Admission Experts",
+        description: "Get expert admission guidance for Jamia Hamdard University, MBBS, B.Tech, MBA, BBA, Nursing, and top Delhi colleges. JCS offers complete end-to-end hassle-free admission support.",
+        canonical: "https://jcsconsultancy.in/",
+        keywords: "jamia hamdard admission consultant, college admission delhi, mbbs admission delhi, low rank admission consultant, nursing admission delhi, btech admission delhi",
+        schema: {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "JCS Consultancy — Top Admission Consultancy for Jamia Hamdard & Delhi Colleges",
+            "url": "https://jcsconsultancy.in/",
+            "description": "Expert admission guidance for Jamia Hamdard, MBBS, B.Tech, MBA, Nursing & Delhi colleges. 1200+ success stories.",
+        }
+    });
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {

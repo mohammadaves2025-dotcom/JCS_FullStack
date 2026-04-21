@@ -54,10 +54,24 @@ const PublicLayout = ({ children }) => {
                     {/* Links Area */}
                     <div className="flex items-center gap-3.5 md:gap-6">
                         <NavLink
+                            to="/jamia-hamdard"
+                            className={`hidden lg:block text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-colors uppercase ${isSolid ? 'text-gray-700 hover:text-jcs-brand' : 'text-white/80 hover:text-white drop-shadow-md'}`}
+                        >
+                            Jamia Hamdard
+                        </NavLink>
+
+                        <NavLink
                             to="/mbbs-abroad"
                             className={`text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-colors uppercase ${isSolid ? 'text-gray-700 hover:text-jcs-brand' : 'text-jcs-brand hover:text-white drop-shadow-md'}`}
                         >
                             MBBS Abroad
+                        </NavLink>
+
+                        <NavLink
+                            to="/blog"
+                            className={`hidden md:block text-[11px] sm:text-xs md:text-sm font-black tracking-wide transition-colors uppercase ${isSolid ? 'text-gray-700 hover:text-jcs-brand' : 'text-white/80 hover:text-white drop-shadow-md'}`}
+                        >
+                            Blog
                         </NavLink>
 
                         <NavLink
@@ -94,6 +108,48 @@ const PublicLayout = ({ children }) => {
                         Every year, thousands of students compete for limited seats. Jamia Consultancy Services bridges the gap between ambition and reality by providing expert guidance for management quota and direct admissions across premium institutions. 100% transparent, secure, and hassle-free.
                     </p>
 
+                    {/* 🟢 SEO Footer Navigation */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                        <div>
+                            <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-3">Medical Admissions</h4>
+                            <div className="space-y-2">
+                                <NavLink to="/mbbs-admission" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">MBBS Admission Delhi</NavLink>
+                                <NavLink to="/mbbs-abroad" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">MBBS Abroad</NavLink>
+                                <NavLink to="/nursing-admission" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">Nursing Admission</NavLink>
+                                <NavLink to="/bpharm-admission" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">B.Pharm Admission</NavLink>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-3">Tech & Management</h4>
+                            <div className="space-y-2">
+                                <NavLink to="/btech-admission" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">B.Tech Admission</NavLink>
+                                <NavLink to="/mba-bba-admission" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">MBA & BBA Admission</NavLink>
+                                <NavLink to="/delhi-college-admission" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">Delhi College Admission</NavLink>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-3">Top Universities</h4>
+                            <div className="space-y-2">
+                                <NavLink to="/jamia-hamdard" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">Jamia Hamdard</NavLink>
+                                <NavLink to="/blog" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">Admission Blog</NavLink>
+                                <NavLink to="/contact" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">Contact Us</NavLink>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider mb-3">Contact JCS</h4>
+                            <div className="space-y-2">
+                                <a href="tel:+919990922119" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">📞 9990922119</a>
+                                <a href="https://wa.me/919990922119" target="_blank" rel="noreferrer" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">💬 WhatsApp</a>
+                                <a href="https://www.instagram.com/jcs.delhi/" target="_blank" rel="noreferrer" className="block text-xs font-semibold text-gray-500 hover:text-jcs-brand transition-colors">📸 @jcs.delhi</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* SEO Footer Text */}
+                    <p className="text-xs text-gray-400 font-medium max-w-4xl leading-relaxed mb-8">
+                        JCS Consultancy provides professional admission guidance and documentation support for Jamia Hamdard University, MBBS, B.Tech, MBA, BBA, Nursing, B.Pharm, and top colleges across Delhi NCR. Final admission decisions are subject to institutional policies, seat availability, and eligibility criteria.
+                    </p>
+
                     {/* 🟢 New Instagram Integration */}
                     <div className="mb-10">
                         <a 
@@ -108,9 +164,9 @@ const PublicLayout = ({ children }) => {
                     </div>
                     
                     <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-gray-400">
-                        <p>Copyright © 2026, Jamia Consultancy Services.</p>
+                        <p>Copyright © 2026, Jamia Consultancy Services. All rights reserved.</p>
                         <div className="flex gap-6 items-center">
-                            <NavLink to="/privacy" className="hover:text-jcs-deep">Privacy</NavLink>
+                            <NavLink to="/privacy" className="hover:text-jcs-deep">Privacy Policy</NavLink>
                             <NavLink to="/terms" className="hover:text-jcs-deep">Terms and Conditions</NavLink>
                             {/* 🟢 THE HIDDEN DOOR: Discreet Staff Access */}
                             <NavLink to="/login" className="bg-gray-200/50 px-3 py-1 rounded text-gray-400 hover:bg-jcs-deep hover:text-white transition-all">

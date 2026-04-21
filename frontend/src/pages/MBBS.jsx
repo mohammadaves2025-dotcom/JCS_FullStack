@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { FiSend, FiUser, FiPhone, FiMail, FiMapPin, FiGlobe, FiBookOpen, FiCheckCircle, FiShield, FiUsers, FiArrowRight, FiClock } from 'react-icons/fi';
 import { LeadContext } from '../context/LeadContext';
 import logo from '../assets/JCS-LOGO1.jpeg';
+import { useSEO } from '../hooks/useSEO';
 
 // 🟢 Animated counter hook for the stats
 const useCounter = (target, duration = 1800, start = false) => {
@@ -22,6 +23,22 @@ const useCounter = (target, duration = 1800, start = false) => {
 };
 
 const MBBS = () => {
+    useSEO({
+        title: "MBBS Abroad Admissions 2026 | Russia, Georgia, Kazakhstan | JCS Consultancy",
+        description: "Study MBBS abroad in MCI/NMC-approved universities in Russia, Georgia & Kazakhstan. Low tuition fees, direct admissions, no NEET cutoff barrier. JCS Consultancy guides you. Call 9990922119.",
+        canonical: "https://jcsconsultancy.in/mbbs-abroad",
+        keywords: "mbbs abroad, mbbs russia, mbbs georgia, mbbs kazakhstan, mbbs abroad low fees, nmc approved mbbs abroad, mbbs abroad admission consultant delhi",
+        schema: {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "MBBS Abroad Admissions | JCS Consultancy",
+            "url": "https://jcsconsultancy.in/mbbs-abroad",
+            "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
+                { "@type": "ListItem", "position": 2, "name": "MBBS Abroad", "item": "https://jcsconsultancy.in/mbbs-abroad" }
+            ]}
+        }
+    });
     const [scrolled, setScrolled] = useState(false);
     const [statsStarted, setStatsStarted] = useState(false);
     const statsRef = useRef(null);

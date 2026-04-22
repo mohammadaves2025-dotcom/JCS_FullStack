@@ -4,7 +4,7 @@
  */
 import { useEffect } from 'react';
 
-const DEFAULT_DOMAIN = 'https://jcsconsultancy.in';
+const DEFAULT_DOMAIN = 'https://www.jamiaconsultancyservices.in';
 const DEFAULT_IMAGE = `${DEFAULT_DOMAIN}/JCS-LOGO1.jpeg`;
 
 function setMeta(name, content, useProperty = false) {

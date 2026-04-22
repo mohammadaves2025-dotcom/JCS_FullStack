@@ -13,13 +13,13 @@ const LandingPage = () => {
     useSEO({
         title: "JCS Consultancy | Jamia Hamdard, MBBS, B.Tech & Delhi College Admission Experts",
         description: "Get expert admission guidance for Jamia Hamdard University, MBBS, B.Tech, MBA, BBA, Nursing, and top Delhi colleges. JCS offers complete end-to-end hassle-free admission support.",
-        canonical: "https://jcsconsultancy.in/",
+        canonical: "https://www.jamiaconsultancyservices.in/",
         keywords: "jamia hamdard admission consultant, college admission delhi, mbbs admission delhi, low rank admission consultant, nursing admission delhi, btech admission delhi",
         schema: {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "JCS Consultancy — Top Admission Consultancy for Jamia Hamdard & Delhi Colleges",
-            "url": "https://jcsconsultancy.in/",
+            "url": "https://www.jamiaconsultancyservices.in/",
             "description": "Expert admission guidance for Jamia Hamdard, MBBS, B.Tech, MBA, Nursing & Delhi colleges. 1200+ success stories.",
         }
     });

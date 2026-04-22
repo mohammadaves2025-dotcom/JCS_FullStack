@@ -8,16 +8,16 @@ const BPharmAdmissionPage = () => {
   useSEO({
     title: "B.Pharm Admission in Delhi | Jamia Hamdard Pharmacy | JCS Consultancy",
     description: "Get expert B.Pharm & M.Pharm admission guidance in Delhi NCR. Jamia Hamdard is ranked #1 in Pharmacy in India. JCS Consultancy helps secure your seat. Call 9990922119.",
-    canonical: "https://jcsconsultancy.in/bpharm-admission",
+    canonical: "https://www.jamiaconsultancyservices.in/bpharm-admission",
     keywords: "bpharm admission delhi, jamia hamdard pharmacy admission, pharmacy college delhi, b pharm admission 2026, pharmacy management quota",
     schema: {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": "B.Pharm Admission Delhi | JCS Consultancy",
-      "url": "https://jcsconsultancy.in/bpharm-admission",
+      "url": "https://www.jamiaconsultancyservices.in/bpharm-admission",
       "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-        { "@type": "ListItem", "position": 2, "name": "B.Pharm Admission", "item": "https://jcsconsultancy.in/bpharm-admission" }
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+        { "@type": "ListItem", "position": 2, "name": "B.Pharm Admission", "item": "https://www.jamiaconsultancyservices.in/bpharm-admission" }
       ]}
     }
   });

@@ -26,16 +26,16 @@ const MBBS = () => {
     useSEO({
         title: "MBBS Abroad Admissions 2026 | Russia, Georgia, Kazakhstan | JCS Consultancy",
         description: "Study MBBS abroad in MCI/NMC-approved universities in Russia, Georgia & Kazakhstan. Low tuition fees, direct admissions, no NEET cutoff barrier. JCS Consultancy guides you. Call 9990922119.",
-        canonical: "https://jcsconsultancy.in/mbbs-abroad",
+        canonical: "https://www.jamiaconsultancyservices.in/mbbs-abroad",
         keywords: "mbbs abroad, mbbs russia, mbbs georgia, mbbs kazakhstan, mbbs abroad low fees, nmc approved mbbs abroad, mbbs abroad admission consultant delhi",
         schema: {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "MBBS Abroad Admissions | JCS Consultancy",
-            "url": "https://jcsconsultancy.in/mbbs-abroad",
+            "url": "https://www.jamiaconsultancyservices.in/mbbs-abroad",
             "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-                { "@type": "ListItem", "position": 2, "name": "MBBS Abroad", "item": "https://jcsconsultancy.in/mbbs-abroad" }
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+                { "@type": "ListItem", "position": 2, "name": "MBBS Abroad", "item": "https://www.jamiaconsultancyservices.in/mbbs-abroad" }
             ]}
         }
     });

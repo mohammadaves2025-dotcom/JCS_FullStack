@@ -8,10 +8,10 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Nursing Admission in Delhi | JCS Consultancy",
-  "url": "https://jcsconsultancy.in/nursing-admission",
+  "url": "https://www.jamiaconsultancyservices.in/nursing-admission",
   "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-    { "@type": "ListItem", "position": 2, "name": "Nursing Admission", "item": "https://jcsconsultancy.in/nursing-admission" }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+    { "@type": "ListItem", "position": 2, "name": "Nursing Admission", "item": "https://www.jamiaconsultancyservices.in/nursing-admission" }
   ]}
 };
 
@@ -19,7 +19,7 @@ const NursingAdmissionPage = () => {
   useSEO({
     title: "Nursing Admission in Delhi | B.Sc Nursing | JCS Consultancy",
     description: "Expert B.Sc Nursing, GNM, Post Basic Nursing admission guidance in Delhi NCR. Jamia Hamdard Faculty of Nursing & top colleges. Call JCS: 9990922119.",
-    canonical: "https://jcsconsultancy.in/nursing-admission",
+    canonical: "https://www.jamiaconsultancyservices.in/nursing-admission",
     keywords: "nursing admission delhi, bsc nursing admission, gnm nursing delhi, jamia hamdard nursing admission, nursing college delhi ncr",
     schema,
   });

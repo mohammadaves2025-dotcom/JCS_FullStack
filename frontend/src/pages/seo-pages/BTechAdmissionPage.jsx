@@ -8,13 +8,13 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "B.Tech Admission in Delhi | JCS Consultancy",
-  "url": "https://jcsconsultancy.in/btech-admission",
+  "url": "https://www.jamiaconsultancyservices.in/btech-admission",
   "description": "Expert B.Tech admission guidance for Jamia Hamdard, IP University & top engineering colleges in Delhi NCR. Low JEE rank? We help with management quota.",
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-      { "@type": "ListItem", "position": 2, "name": "B.Tech Admission", "item": "https://jcsconsultancy.in/btech-admission" }
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+      { "@type": "ListItem", "position": 2, "name": "B.Tech Admission", "item": "https://www.jamiaconsultancyservices.in/btech-admission" }
     ]
   }
 };
@@ -23,7 +23,7 @@ const BTechAdmissionPage = () => {
   useSEO({
     title: "B.Tech Admission in Delhi | Jamia Hamdard | JCS Consultancy",
     description: "Get expert B.Tech admission guidance in Delhi NCR. Jamia Hamdard, IP University & top engineering colleges. Low JEE rank? Management quota available. Call 9990922119.",
-    canonical: "https://jcsconsultancy.in/btech-admission",
+    canonical: "https://www.jamiaconsultancyservices.in/btech-admission",
     keywords: "btech admission delhi, jamia hamdard btech admission, engineering admission delhi, low jee rank admission, btech management quota delhi",
     schema,
   });

@@ -5,7 +5,7 @@
  *   <SEOHead
  *     title="Page Title | JCS Consultancy"
  *     description="Page description..."
- *     canonical="https://jcsconsultancy.in/page"
+ *     canonical="https://www.jamiaconsultancyservices.in/page"
  *   />
  */
 import { useSEO } from '../hooks/useSEO';

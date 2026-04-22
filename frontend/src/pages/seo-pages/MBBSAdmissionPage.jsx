@@ -9,13 +9,13 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "MBBS Admission in Delhi | JCS Consultancy",
-  "url": "https://jcsconsultancy.in/mbbs-admission",
+  "url": "https://www.jamiaconsultancyservices.in/mbbs-admission",
   "description": "Expert MBBS admission guidance in Delhi NCR. Low NEET rank? Get direct admission through management quota. Jamia Hamdard & top medical colleges.",
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-      { "@type": "ListItem", "position": 2, "name": "MBBS Admission", "item": "https://jcsconsultancy.in/mbbs-admission" }
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+      { "@type": "ListItem", "position": 2, "name": "MBBS Admission", "item": "https://www.jamiaconsultancyservices.in/mbbs-admission" }
     ]
   },
   "mainEntity": {
@@ -39,7 +39,7 @@ const MBBSAdmissionPage = () => {
   useSEO({
     title: "MBBS Admission in Delhi | Low NEET Rank | JCS Consultancy",
     description: "Get expert MBBS admission guidance in Delhi NCR. Low NEET rank? JCS Consultancy helps secure management quota seats at Jamia Hamdard & top medical colleges. Call 9990922119.",
-    canonical: "https://jcsconsultancy.in/mbbs-admission",
+    canonical: "https://www.jamiaconsultancyservices.in/mbbs-admission",
     keywords: "mbbs admission delhi, mbbs admission low neet rank, jamia hamdard mbbs admission, mbbs management quota delhi, mbbs direct admission",
     schema,
   });

@@ -8,10 +8,10 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "MBA BBA Admission in Delhi | JCS Consultancy",
-  "url": "https://jcsconsultancy.in/mba-bba-admission",
+  "url": "https://www.jamiaconsultancyservices.in/mba-bba-admission",
   "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-    { "@type": "ListItem", "position": 2, "name": "MBA/BBA Admission", "item": "https://jcsconsultancy.in/mba-bba-admission" }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+    { "@type": "ListItem", "position": 2, "name": "MBA/BBA Admission", "item": "https://www.jamiaconsultancyservices.in/mba-bba-admission" }
   ]}
 };
 
@@ -19,7 +19,7 @@ const MBABBAAdmissionPage = () => {
   useSEO({
     title: "MBA & BBA Admission in Delhi | Jamia Hamdard | JCS Consultancy",
     description: "Expert MBA & BBA admission guidance in Delhi NCR. Jamia Hamdard, IP University & top management colleges. Direct admission support. Call JCS: 9990922119.",
-    canonical: "https://jcsconsultancy.in/mba-bba-admission",
+    canonical: "https://www.jamiaconsultancyservices.in/mba-bba-admission",
     keywords: "mba admission delhi, bba admission delhi, jamia hamdard mba admission, management college admission delhi, mba direct admission",
     schema,
   });

@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════
-# robots.txt — JCS Consultancy (jcsconsultancy.in)
+# robots.txt — JCS Consultancy (jamiaconsultancyservices.in)
 # ═══════════════════════════════════════════════════
 
 User-agent: *
@@ -26,4 +26,4 @@ User-agent: DuckDuckBot
 Allow: /
 
 # Sitemap location
-Sitemap: https://jcsconsultancy.in/sitemap.xml
+Sitemap: https://www.jamiaconsultancyservices.in/sitemap.xml

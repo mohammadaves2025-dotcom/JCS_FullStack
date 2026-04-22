@@ -8,7 +8,7 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
   "name": "Contact JCS Consultancy",
-  "url": "https://jcsconsultancy.in/contact",
+  "url": "https://www.jamiaconsultancyservices.in/contact",
   "description": "Contact JCS Consultancy for expert admission guidance. Call, WhatsApp or email us for Jamia Hamdard, MBBS, B.Tech, MBA admissions.",
 };
 
@@ -16,7 +16,7 @@ const ContactUsPage = () => {
   useSEO({
     title: "Contact JCS Consultancy | Admission Guidance Delhi | 9990922119",
     description: "Contact JCS Consultancy for expert college admission guidance in Delhi NCR. Call 9990922119 or WhatsApp for Jamia Hamdard, MBBS, B.Tech, MBA, Nursing admissions.",
-    canonical: "https://jcsconsultancy.in/contact",
+    canonical: "https://www.jamiaconsultancyservices.in/contact",
     keywords: "jcs consultancy contact, admission consultant contact delhi, jamia hamdard admission help, college admission consultant phone number",
     schema,
   });

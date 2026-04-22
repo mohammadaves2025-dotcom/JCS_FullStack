@@ -8,10 +8,10 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "name": "Delhi College Admission Consultant | JCS Consultancy",
-  "url": "https://jcsconsultancy.in/delhi-college-admission",
+  "url": "https://www.jamiaconsultancyservices.in/delhi-college-admission",
   "breadcrumb": { "@type": "BreadcrumbList", "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://jcsconsultancy.in/" },
-    { "@type": "ListItem", "position": 2, "name": "Delhi College Admission", "item": "https://jcsconsultancy.in/delhi-college-admission" }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.jamiaconsultancyservices.in/" },
+    { "@type": "ListItem", "position": 2, "name": "Delhi College Admission", "item": "https://www.jamiaconsultancyservices.in/delhi-college-admission" }
   ]}
 };
 
@@ -19,7 +19,7 @@ const DelhiCollegeAdmissionPage = () => {
   useSEO({
     title: "Delhi College Admission Consultant | Top Colleges | JCS Consultancy",
     description: "Expert admission guidance for top colleges in Delhi NCR — medical, engineering, management, nursing & more. Low rank? JCS finds the right path. Call 9990922119.",
-    canonical: "https://jcsconsultancy.in/delhi-college-admission",
+    canonical: "https://www.jamiaconsultancyservices.in/delhi-college-admission",
     keywords: "delhi college admission consultant, top colleges in delhi, admission consultant delhi ncr, low rank college admission delhi, delhi university admission help",
     schema,
   });

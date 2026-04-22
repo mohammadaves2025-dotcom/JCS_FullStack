@@ -71,19 +71,19 @@ const schema = {
   "@context": "https://schema.org",
   "@type": "Blog",
   "name": "JCS Consultancy Blog — College Admission Guides",
-  "url": "https://jcsconsultancy.in/blog",
+  "url": "https://www.jamiaconsultancyservices.in/blog",
   "description": "Expert guides on college admissions in Delhi NCR — Jamia Hamdard, MBBS, B.Tech, MBA, Nursing and more.",
   "publisher": {
     "@type": "Organization",
     "name": "JCS Consultancy",
-    "url": "https://jcsconsultancy.in",
-    "logo": { "@type": "ImageObject", "url": "https://jcsconsultancy.in/JCS-LOGO1.jpeg" }
+    "url": "https://www.jamiaconsultancyservices.in",
+    "logo": { "@type": "ImageObject", "url": "https://www.jamiaconsultancyservices.in/JCS-LOGO1.jpeg" }
   },
   "blogPost": BLOG_POSTS.map(p => ({
     "@type": "BlogPosting",
     "headline": p.title,
     "description": p.excerpt,
-    "url": `https://jcsconsultancy.in/blog/${p.slug}`,
+    "url": `https://www.jamiaconsultancyservices.in/blog/${p.slug}`,
     "datePublished": p.date,
     "author": { "@type": "Organization", "name": p.author },
   }))
@@ -93,7 +93,7 @@ const BlogPage = () => {
   useSEO({
     title: "College Admission Blog | Jamia Hamdard, MBBS, B.Tech Guides | JCS",
     description: "Expert college admission guides for Jamia Hamdard, MBBS Delhi, B.Tech, MBA, Nursing. Low rank admission tips, course comparisons & more from JCS Consultancy.",
-    canonical: "https://jcsconsultancy.in/blog",
+    canonical: "https://www.jamiaconsultancyservices.in/blog",
     keywords: "jamia hamdard admission guide, mbbs admission tips, college admission blog delhi, low rank admission guide, btech nursing mba admission",
     schema,
   });

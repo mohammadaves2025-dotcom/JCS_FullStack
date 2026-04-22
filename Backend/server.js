@@ -20,9 +20,12 @@ const app = express();
 
 // ✅ CORS: Read allowed origin from env — never hardcode a URL
 const allowedOrigins = [
-    process.env.FRONTEND_URL,
-    "http://localhost:5173", // Vite dev server
+
+    process.env.FRONTEND_URL,           // https://www.jamiaconsultancyservices.in
+    process.env.FRONTEND_URL_BARE,      // https://jamiaconsultancyservices.in
+    "http://localhost:5173",            // Vite dev server
     "http://localhost:3000",
+
 ].filter(Boolean); // Remove undefined if FRONTEND_URL not set
 
 app.use((req, res, next) => {

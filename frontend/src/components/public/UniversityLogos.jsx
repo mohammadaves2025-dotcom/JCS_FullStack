@@ -3,12 +3,12 @@ import React from 'react';
 const UniversityLogos = () => {
     // 🟢 Switched to domains for Google API
     const universities = [
-        { name: "Amity University", domain: "amity.edu" },
-        { name: "Sharda University", domain: "sharda.ac.in" },
-        { name: "Jamia Millia Islamia", domain: "jmi.ac.in" },
-        { name: "Galgotias University", domain: "galgotiasuniversity.edu.in" },
-        { name: "Shiv Nadar", domain: "snu.edu.in" },
-        { name: "Delhi University", domain: "du.ac.in" },
+        { name: "Amity University", domain: "https://p7.hiclipart.com/preview/931/650/469/amity-university-noida-amity-school-of-engineering-amity-business-school-campus-university-logo.jpg" },
+        { name: "Sharda University", domain: "https://www.google.com/s2/favicons?domain=sharda.ac.in&sz=128" },
+        { name: "Jamia Hamdard", domain: "https://tse4.mm.bing.net/th/id/OIP.YKK58nojUNv3Edtg7QJy5wHaHj?rs=1&pid=ImgDetMain&o=7&rm=3" },
+        { name: "Symbiosis University", domain: "https://ui-avatars.com/api/?name=Symbiosis&background=3b82f6&color=fff&font-size=0.4&rounded=true" },
+        { name: "Bennet University", domain: "https://www.google.com/s2/favicons?domain=bennett.edu.in&sz=128" },
+        { name: "Manipal University", domain: "https://ui-avatars.com/api/?name=Manipal+University&background=3b82f6&color=fff&font-size=0.4&rounded=true" },
     ];
 
     const doubledUniversities = [...universities, ...universities];
@@ -32,7 +32,7 @@ const UniversityLogos = () => {
                         <div key={idx} className="flex items-center gap-3  opacity-60 hover:opacity-100 transition-all duration-300 cursor-pointer">
                             <div className="w-10 h-10 bg-white border border-gray-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm shrink-0">
                                 <img 
-                                    src={`https://www.google.com/s2/favicons?domain=${uni.domain}&sz=128`} 
+                                    src={uni.domain}
                                     alt={uni.name} 
                                     className="max-w-full max-h-full object-contain"
                                     // 🟢 BULLETPROOF FALLBACK

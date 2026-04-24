@@ -18,7 +18,7 @@ const inquirySchema = new mongoose.Schema(
     },
 
     // CRM Pipeline
-    status: { 
+    status: {
       type: String,
       enum: ["New", "Waiting List", "Converted", "Dead"],
       default: "New"
@@ -26,8 +26,8 @@ const inquirySchema = new mongoose.Schema(
 
     temperature: {
       type: String,
-      enum: ["Hot", "Warm", "Cold", "Unassigned"],
-      default: "Unassigned"
+      enum: ["INTERESTED", "FOLLOW UP 1", "FOLLOW UP 2"],
+      default: "INTERESTED"
     },
     waitlistReason: {
       type: String,

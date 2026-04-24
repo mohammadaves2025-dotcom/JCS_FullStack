@@ -4,6 +4,7 @@ import PublicLayout from '../../components/public/PublicLayout';
 import { useSEO } from '../../hooks/useSEO';
 import { FiCheckCircle, FiPhone, FiArrowRight } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import LeadCaptureForm from '../../components/LeadCaptureForm';
 
 const schema = {
   "@context": "https://schema.org",
@@ -112,6 +113,11 @@ const MBBSAdmissionPage = () => {
             <FiPhone /> Call Now: 9990922119
           </a>
         </div>
+      </div>
+
+      {/* Lead Capture Form */}
+      <div className="py-16 bg-gray-50">
+        <LeadCaptureForm />
       </div>
 
       <div className="py-16 bg-white">

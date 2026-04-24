@@ -6,7 +6,7 @@ import { FiTrendingUp, FiUsers, FiDollarSign, FiAward, FiActivity, FiArrowUpRigh
 const Overview = () => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
-    
+
     // Aggregated Data State
     const [stats, setStats] = useState({
         totalRevenue: 0,
@@ -49,18 +49,18 @@ const Overview = () => {
 
             // Calculate active and hot leads
             const activeLeadsCount = leads.filter(l => l.status !== 'Converted' && l.status !== 'Dead').length;
-            const hotLeadsArray = leads.filter(l => l.temperature === 'Hot' && l.status !== 'Converted').slice(0, 5);
+            const hotLeadsArray = leads.filter(l => l.temperature === 'FOLLOW UP 2' && l.status !== 'Converted').slice(0, 5);
 
             // 🟢 CALCULATE TODAY'S TASKS
             // Get today's date in YYYY-MM-DD format based on local time
             const localToday = new Date();
             const offset = localToday.getTimezoneOffset() * 60000;
             const todayStr = (new Date(localToday - offset)).toISOString().split('T')[0];
-            
-            const todaysTasksArray = leads.filter(l => 
-                l.nextFollowUpDate && 
-                l.nextFollowUpDate.startsWith(todayStr) && 
-                l.status !== 'Converted' && 
+
+            const todaysTasksArray = leads.filter(l =>
+                l.nextFollowUpDate &&
+                l.nextFollowUpDate.startsWith(todayStr) &&
+                l.status !== 'Converted' &&
                 l.status !== 'Dead'
             ).slice(0, 5); // Show top 5 tasks for the day
 
@@ -99,7 +99,7 @@ const Overview = () => {
 
     return (
         <div className="max-w-[1400px] mx-auto animate-fade-in-up pb-12">
-            
+
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
                 <div>
@@ -180,19 +180,19 @@ const Overview = () => {
 
             {/* BOTTOM ROW: SPLIT VIEW */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
+
                 {/* LEFT: Pipeline Health Visualization */}
                 <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relative overflow-hidden h-full">
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gray-50 rounded-full blur-3xl opacity-50 pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
-                    
+
                     <div className="flex justify-between items-center mb-10 relative z-10">
-                        <h3 className="text-xl font-black text-gray-900 tracking-tight flex items-center gap-2"><FiTrendingUp className="text-jcs-brand"/> Conversion Funnel</h3>
+                        <h3 className="text-xl font-black text-gray-900 tracking-tight flex items-center gap-2"><FiTrendingUp className="text-jcs-brand" /> Conversion Funnel</h3>
                         <div className="bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 flex items-center gap-3 shadow-inner">
                             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Close Rate</span>
                             <span className="text-lg font-black text-jcs-deep">{conversionRate}%</span>
                         </div>
                     </div>
-                    
+
                     <div className="space-y-8 relative z-10">
                         {/* Funnel Bar 1: Raw Leads */}
                         <div className="relative group">
@@ -229,7 +229,7 @@ const Overview = () => {
 
                 {/* RIGHT: Action Center (Stacked Tasks & Hot Leads) */}
                 <div className="flex flex-col gap-6">
-                    
+
                     {/* 🟢 WIDGET 1: Today's Tasks */}
                     <div className="bg-gradient-to-b from-blue-50/50 to-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-blue-100/50 flex flex-col relative overflow-hidden flex-1">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400 opacity-[0.03] rounded-full blur-2xl pointer-events-none"></div>
@@ -291,7 +291,7 @@ const Overview = () => {
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-white/60 rounded-3xl border border-dashed border-gray-200">
                                     <p className="text-sm font-bold text-gray-900">Inbox Zero!</p>
-                                    <p className="text-xs font-medium text-gray-500 mt-1 max-w-[200px]">Tag leads as 'Hot' in the pipeline to pin them here.</p>
+                                    <p className="text-xs font-medium text-gray-500 mt-1 max-w-[200px]">Tag leads as 'FOLLOW UP 2' in the pipeline to pin them here.</p> 
                                 </div>
                             )}
                         </div>
@@ -304,15 +304,20 @@ const Overview = () => {
             {selectedLead && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
                     <div className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-md w-full shadow-2xl animate-fade-in-up border border-white/20 relative overflow-hidden">
-                        
+
                         <button onClick={() => setSelectedLead(null)} className="absolute top-6 right-6 w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-gray-200 transition-colors z-10"><FiX size={20} /></button>
-                        
+
                         <div className="mb-6 flex items-center gap-4">
                             <div className="w-16 h-16 bg-gray-900 text-white rounded-2xl flex items-center justify-center text-2xl font-black shadow-md">{selectedLead.name.charAt(0)}</div>
                             <div>
                                 <h2 className="text-2xl font-black text-gray-900 tracking-tight">{selectedLead.name}</h2>
-                                <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest mt-1 inline-block ${selectedLead.temperature === 'Hot' ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
-                                    {selectedLead.temperature === 'Hot' ? '🔥 Hot Lead' : 'Lead Profile'}
+                                <span className={`text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest mt-1 inline-block ${selectedLead.temperature === 'FOLLOW UP 2' ? 'bg-orange-50 text-orange-600' :
+                                        selectedLead.temperature === 'FOLLOW UP 1' ? 'bg-amber-50 text-amber-600' :
+                                            'bg-teal-50 text-teal-600'
+                                    }`}>
+                                    {selectedLead.temperature === 'FOLLOW UP 2' ? '🔥 FOLLOW UP 2' :
+                                        selectedLead.temperature === 'FOLLOW UP 1' ? '📞 FOLLOW UP 1' :
+                                            '✅ INTERESTED'}
                                 </span>
                             </div>
                         </div>

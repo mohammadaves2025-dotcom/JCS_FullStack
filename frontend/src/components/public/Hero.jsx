@@ -86,17 +86,25 @@ const Hero = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="relative">
                                     <FiMapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10" />
-                                    <select required value={formData.preferredCity} onChange={(e) => setFormData({ ...formData, preferredCity: e.target.value })} className="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-jcs-brand focus:ring-4 focus:ring-jcs-brand/10 bg-white text-sm font-bold text-gray-900 appearance-none cursor-pointer shadow-sm relative">
-                                        <option value="" disabled>Current City*</option>
-                                        <option value="Delhi NCR">Delhi NCR</option><option value="Bangalore">Bangalore</option><option value="Pune">Pune</option><option value="Other">Other</option>
-                                    </select>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.preferredCity}
+                                        onChange={(e) => setFormData({ ...formData, preferredCity: e.target.value })}
+                                        placeholder="State / City*"
+                                        className="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-jcs-brand focus:ring-4 focus:ring-jcs-brand/10 bg-white text-sm font-bold text-gray-900 transition-all shadow-sm"
+                                    />
                                 </div>
                                 <div className="relative">
                                     <FiBookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10" />
-                                    <select required value={formData.interestedCourse} onChange={(e) => setFormData({ ...formData, interestedCourse: e.target.value })} className="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-jcs-brand focus:ring-4 focus:ring-jcs-brand/10 bg-white text-sm font-bold text-gray-900 appearance-none cursor-pointer shadow-sm relative">
-                                        <option value="" disabled>Target Course*</option>
-                                        <option value="B.Tech">B.Tech</option><option value="MBBS">MBBS</option><option value="BDS">BDS</option><option value="MBA">MBA/BBA</option><option value="Law">Law</option>
-                                    </select>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.interestedCourse}
+                                        onChange={(e) => setFormData({ ...formData, interestedCourse: e.target.value })}
+                                        placeholder="Target Course*"
+                                        className="w-full pl-11 pr-4 py-4 rounded-xl border border-gray-200 focus:outline-none focus:border-jcs-brand focus:ring-4 focus:ring-jcs-brand/10 bg-white text-sm font-bold text-gray-900 transition-all shadow-sm"
+                                    />
                                 </div>
                             </div>
 

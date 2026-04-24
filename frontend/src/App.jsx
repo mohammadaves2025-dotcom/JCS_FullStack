@@ -33,6 +33,8 @@ import DelhiCollegeAdmissionPage from './pages/seo-pages/DelhiCollegeAdmissionPa
 import BPharmAdmissionPage from './pages/seo-pages/BPharmAdmissionPage';
 import ContactUsPage from './pages/seo-pages/ContactUsPage';
 import BlogPage from './pages/seo-pages/BlogPage';
+import BlogPostPage from './pages/seo-pages/BlogPostPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
 axios.defaults.withCredentials = true;
@@ -61,6 +63,7 @@ function App() {
           <Route path="/bpharm-admission" element={<BPharmAdmissionPage />} />
           <Route path="/contact" element={<ContactUsPage />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
 
           {/* ══════════ PROTECTED ADMIN ROUTES ══════════ */}
           <Route path="/admin" element={
@@ -105,6 +108,9 @@ function App() {
               <StudentPortal />
             </ProtectedRoute>
           } />
+
+          {/* ══════════ 404 FALLBACK ══════════ */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </LeadProvider>
     </AuthProvider>

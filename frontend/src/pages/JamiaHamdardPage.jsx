@@ -3,6 +3,7 @@ import PublicLayout from '../components/public/PublicLayout';
 import { FiMapPin, FiAward, FiUsers, FiBook, FiChevronDown, FiChevronUp, FiPhone, FiMail, FiStar, FiSearch, FiArrowRight } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useSEO } from '../hooks/useSEO';
+import LeadCaptureForm from '../components/LeadCaptureForm';
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 
@@ -671,6 +672,10 @@ const JamiaHamdardPage = () => {
             <CoursesSection />
             <WhySection />
             <AdmissionProcess />
+            {/* Lead Capture Form */}
+            <div className="py-16 bg-gray-50">
+                <LeadCaptureForm />
+            </div>
             <ContactStrip />
         </PublicLayout>
     );

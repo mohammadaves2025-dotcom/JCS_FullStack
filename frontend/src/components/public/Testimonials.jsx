@@ -34,7 +34,7 @@ const Testimonials = () => {
                             
                             <div className="flex items-center gap-4 mb-6 relative z-10">
                                 <div className="w-12 h-12 rounded-full p-0.5 bg-white shadow-sm border border-gray-100 shrink-0">
-                                    <img src={story.img} className="w-full h-full rounded-full object-cover" alt={story.name} />
+                                    <img src={story.img} loading="lazy" className="w-full h-full rounded-full object-cover" alt={`${story.name} - JCS Consultancy student testimonial`} />
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900 leading-none group-hover:text-jcs-brand transition-colors">{story.name}</h4>

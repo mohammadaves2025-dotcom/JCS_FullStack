@@ -172,19 +172,18 @@ const LeadPipeline = () => {
                                     {/* Temperature Selector */}
                                     {statusFilter !== 'Converted' ? (
                                         <select
-                                            value={lead.temperature || "Unassigned"}
+                                            value={lead.temperature || "INTERESTED"}
                                             onChange={(e) => updateLead(lead._id, { temperature: e.target.value })}
                                             onClick={(e) => e.stopPropagation()}
-                                            className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest cursor-pointer outline-none appearance-none shadow-sm transition-colors ${lead.temperature === 'Hot' ? 'bg-red-50 text-red-600 border border-red-100 hover:bg-red-100' :
-                                                    lead.temperature === 'Warm' ? 'bg-orange-50 text-orange-600 border border-orange-100 hover:bg-orange-100' :
-                                                        lead.temperature === 'Cold' ? 'bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100' :
-                                                            'bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100'
+                                            className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest cursor-pointer outline-none appearance-none shadow-sm transition-colors border ${lead.temperature === 'INTERESTED' ? 'bg-teal-50 text-teal-600 border-teal-100 hover:bg-teal-100' :
+                                                    lead.temperature === 'FOLLOW UP 1' ? 'bg-amber-50 text-amber-600 border-amber-100 hover:bg-amber-100' :
+                                                        lead.temperature === 'FOLLOW UP 2' ? 'bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-100' :
+                                                            'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
                                                 }`}
                                         >
-                                            <option value="Unassigned">⚪ Set Temp</option>
-                                            <option value="Hot">🔥 Hot</option>
-                                            <option value="Warm">☀️ Warm</option>
-                                            <option value="Cold">❄️ Cold</option>
+                                            <option value="INTERESTED">✅ INTERESTED</option>
+                                            <option value="FOLLOW UP 1">📞 FOLLOW UP 1</option>
+                                            <option value="FOLLOW UP 2">🔥 FOLLOW UP 2</option>
                                         </select>
                                     ) : (
                                         <span className="bg-jcs-brand/10 text-jcs-brand text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-widest">Converted</span>

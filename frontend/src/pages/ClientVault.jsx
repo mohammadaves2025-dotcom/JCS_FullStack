@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { FiSearch, FiFilter, FiX } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiX, FiPlus, FiUser, FiPhone, FiMail, FiBookOpen } from 'react-icons/fi';
 import ExportButtons from '../components/dashboard/ExportButtons';
 import CustomerDashboard from '../components/dashboard/CustomerDashboard';
 
@@ -11,12 +11,126 @@ const WhatsAppIcon = ({ size = 14 }) => (
     </svg>
 );
 
+// ─── Add Client Modal ─────────────────────────────────────────────────────────
+const AddClientModal = ({ onClose, onSuccess }) => {
+    const [form, setForm] = useState({
+        name: '', phone: '', email: '',
+        targetCourse: '', stateOfDomicile: '',
+        admissionQuota: '', temperature: 'INTERESTED',
+        admissionStatus: 'COLLEGE FORM APPLIED',
+    });
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSubmit = async () => {
+        if (!form.name.trim() || !form.phone.trim()) return setError('Name and phone are required.');
+        setSaving(true);
+        setError('');
+        try {
+            await axios.post('/api/clients', form, { withCredentials: true });
+            onSuccess();
+            onClose();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to add client. Please try again.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const field = (label, key, type = 'text', placeholder = '') => (
+        <div>
+            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">{label}</label>
+            <input
+                type={type}
+                value={form[key]}
+                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                placeholder={placeholder}
+                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand text-gray-900"
+            />
+        </div>
+    );
+
+    return (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-gray-900/70 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in-up">
+                <div className="flex items-center justify-between px-7 py-5 border-b border-gray-100">
+                    <div>
+                        <h2 className="text-xl font-black text-gray-900">Add New Client</h2>
+                        <p className="text-xs text-gray-400 font-semibold mt-0.5">Walk-in / WhatsApp / Offline referral</p>
+                    </div>
+                    <button onClick={onClose} className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
+                        <FiX size={16} />
+                    </button>
+                </div>
+
+                <div className="p-7 space-y-4 max-h-[65vh] overflow-y-auto">
+                    {error && <div className="bg-red-50 text-red-600 border border-red-100 rounded-xl p-3 text-sm font-bold">{error}</div>}
+
+                    <div className="grid grid-cols-2 gap-4">
+                        {field('Full Name *', 'name', 'text', 'Student name')}
+                        {field('Phone *', 'phone', 'tel', '10-digit mobile')}
+                    </div>
+                    {field('Email', 'email', 'email', 'optional')}
+                    <div className="grid grid-cols-2 gap-4">
+                        {field('Target Course', 'targetCourse', 'text', 'e.g. MBBS, B.Tech')}
+                        {field('State of Domicile', 'stateOfDomicile', 'text', 'e.g. Delhi, UP')}
+                    </div>
+                    {field('Admission Quota', 'admissionQuota', 'text', 'e.g. Management Quota, NRI')}
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Lead Temperature</label>
+                            <select
+                                value={form.temperature}
+                                onChange={(e) => setForm({ ...form, temperature: e.target.value })}
+                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand text-gray-900"
+                            >
+                                <option>INTERESTED</option>
+                                <option>FOLLOW UP 1</option>
+                                <option>FOLLOW UP 2</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Admission Stage</label>
+                            <select
+                                value={form.admissionStatus}
+                                onChange={(e) => setForm({ ...form, admissionStatus: e.target.value })}
+                                className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand text-gray-900"
+                            >
+                                <option>COLLEGE FORM APPLIED</option>
+                                <option>WAITING FOR ALLOTMENT</option>
+                                <option>SEAT CONFIRMED</option>
+                                <option>PAYMENT</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="px-7 py-5 border-t border-gray-100 flex gap-3">
+                    <button onClick={onClose} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={saving}
+                        className="flex-1 py-3 rounded-xl bg-jcs-deep text-white font-black text-sm hover:bg-jcs-brand transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                    >
+                        {saving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <FiPlus size={16} />}
+                        {saving ? 'Adding...' : 'Add Client'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ClientVault = () => {
     const { user } = useContext(AuthContext);
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedClient, setSelectedClient] = useState(null);
+    const [showAddClient, setShowAddClient] = useState(false);
 
     const [filterAdmission, setFilterAdmission] = useState('');
     const [filterLeadStatus, setFilterLeadStatus] = useState('');
@@ -99,6 +213,13 @@ const ClientVault = () => {
                             filename="JCS_Clients"
                         />
                     )}
+
+                    <button
+                        onClick={() => setShowAddClient(true)}
+                        className="flex items-center gap-2 px-5 py-3.5 rounded-2xl font-bold text-sm bg-jcs-deep text-white hover:bg-jcs-brand hover:text-gray-900 transition-all shadow-sm border border-jcs-deep"
+                    >
+                        <FiPlus size={16} /> Add Client
+                    </button>
 
                     <div className="relative w-full md:w-72">
                         <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
@@ -208,7 +329,35 @@ const ClientVault = () => {
                                 <span className={`text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider border ${statusColors[client.temperature] || 'bg-gray-50 text-gray-600 border-gray-100'}`}>
                                     {client.temperature || 'INTERESTED'}
                                 </span>
+                                {client.admissionQuota && (
+                                    <span className="text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wider border bg-amber-50 text-amber-700 border-amber-100">
+                                        🎟 {client.admissionQuota}
+                                    </span>
+                                )}
                             </div>
+
+                            {/* Key info row */}
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3 text-[10px] font-bold text-gray-500">
+                                {client.dateOfBirth && (
+                                    <span>🎂 Age: {Math.floor((new Date() - new Date(client.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000))} yrs</span>
+                                )}
+                                {client.stateOfDomicile && (
+                                    <span>📍 {client.stateOfDomicile}</span>
+                                )}
+                            </div>
+
+                            {/* Exam Scores */}
+                            {(client.examScores?.neet || client.examScores?.jee || client.examScores?.class12) && (
+                                <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-2.5 mb-3">
+                                    <p className="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1.5">Exam Scores</p>
+                                    <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                                        {client.examScores?.neet && <span className="text-[10px] font-bold text-blue-700">NEET: {client.examScores.neet}</span>}
+                                        {client.examScores?.jee && <span className="text-[10px] font-bold text-blue-700">JEE: {client.examScores.jee}</span>}
+                                        {client.examScores?.class12 && <span className="text-[10px] font-bold text-blue-700">12th: {client.examScores.class12}</span>}
+                                        {client.examScores?.other && <span className="text-[10px] font-bold text-blue-700">{client.examScores.other}</span>}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="pt-4 border-t border-gray-50 flex flex-col gap-2 flex-1">
                                 {client.targetColleges?.length > 0 && (
@@ -266,6 +415,13 @@ const ClientVault = () => {
                     client={selectedClient}
                     onClose={() => setSelectedClient(null)}
                     refreshClients={fetchClients}
+                />
+            )}
+
+            {showAddClient && (
+                <AddClientModal
+                    onClose={() => setShowAddClient(false)}
+                    onSuccess={fetchClients}
                 />
             )}
         </div>

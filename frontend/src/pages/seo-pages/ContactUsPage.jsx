@@ -3,6 +3,7 @@ import PublicLayout from '../../components/public/PublicLayout';
 import { useSEO } from '../../hooks/useSEO';
 import { FiPhone, FiMail, FiMapPin, FiInstagram } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
+import LeadCaptureForm from '../../components/LeadCaptureForm';
 
 const schema = {
   "@context": "https://schema.org",
@@ -112,6 +113,10 @@ const ContactUsPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      {/* Lead Capture Form */}
+      <div className="py-16 bg-gray-50">
+        <LeadCaptureForm />
       </div>
     </PublicLayout>
   );

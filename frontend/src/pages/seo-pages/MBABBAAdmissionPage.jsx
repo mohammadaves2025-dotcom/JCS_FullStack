@@ -1,6 +1,7 @@
 import React from 'react';
 import PublicLayout from '../../components/public/PublicLayout';
 import { useSEO } from '../../hooks/useSEO';
+import LeadCaptureForm from '../../components/LeadCaptureForm';
 import { FiCheckCircle, FiPhone } from 'react-icons/fi';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -76,6 +77,10 @@ const MBABBAAdmissionPage = () => {
             <FiPhone /> Call Now: 9990922119
           </a>
         </div>
+      </div>
+      {/* Lead Capture Form */}
+      <div className="py-16 bg-gray-50">
+        <LeadCaptureForm />
       </div>
     </PublicLayout>
   );

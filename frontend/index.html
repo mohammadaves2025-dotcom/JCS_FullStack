@@ -227,13 +227,70 @@
     </script>
 
   <!-- ══════════════════════════════════════════════════════
+         STRUCTURED DATA — REVIEWS (Rich Snippets)
+    ══════════════════════════════════════════════════════ -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "JCS Consultancy",
+      "url": "https://www.jamiaconsultancyservices.in",
+      "description": "Expert admission consultancy for Jamia Hamdard, MBBS, B.Tech, MBA, BBA, Nursing and Delhi colleges.",
+      "telephone": "+91-9990922119",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "New Delhi",
+        "addressRegion": "Delhi",
+        "addressCountry": "IN"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "320",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "author": { "@type": "Person", "name": "Aarav Sharma" },
+          "reviewBody": "JCS Consultancy helped me secure a B.Tech seat at Jamia Hamdard when I had a low JEE rank. The entire process was transparent and hassle-free. Highly recommended!"
+        },
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "author": { "@type": "Person", "name": "Nadia Khan" },
+          "reviewBody": "I got admission in B.Sc Nursing at Jamia Hamdard through JCS. They handled all my documents and guided me step by step. Very professional team."
+        },
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "author": { "@type": "Person", "name": "Rahul Mishra" },
+          "reviewBody": "Best consultancy in Delhi for Jamia Hamdard admissions. They got my son into the MBA program within a week. Complete fee transparency, no hidden charges."
+        }
+      ]
+    }
+    </script>
+
+  <!-- ══════════════════════════════════════════════════════
+         HREFLANG — Language targeting (Hindi + English)
+    ══════════════════════════════════════════════════════ -->
+  <link rel="alternate" hreflang="en-IN" href="https://www.jamiaconsultancyservices.in/" />
+  <link rel="alternate" hreflang="hi" href="https://www.jamiaconsultancyservices.in/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.jamiaconsultancyservices.in/" />
+
+  <!-- ══════════════════════════════════════════════════════
          PERFORMANCE & PRELOADS
     ══════════════════════════════════════════════════════ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" as="image" href="/JCS-LOGO1.jpeg" />
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+  <link rel="preload" as="image" href="/JCS-LOGO1.jpeg" fetchpriority="high" />
 
-  <!-- Favicon -->
+  <!-- Favicon — SVG preferred, JPEG fallback -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" type="image/jpeg" href="/JCS-LOGO1.jpeg" />
   <link rel="apple-touch-icon" href="/JCS-LOGO1.jpeg" />
 

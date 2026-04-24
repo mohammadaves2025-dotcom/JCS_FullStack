@@ -137,6 +137,9 @@ const BlogPage = () => {
                     <span className="flex items-center gap-1.5"><FiCalendar size={12} /> {post.date}</span>
                     <span>{post.readTime}</span>
                   </div>
+                  <Link to={`/blog/${post.slug}`} className="mt-4 flex items-center gap-1.5 text-jcs-brand text-xs font-black hover:underline">
+                    Read Full Article <FiArrowRight size={12} />
+                  </Link>
                 </div>
               </article>
             ))}

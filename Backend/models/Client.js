@@ -16,6 +16,19 @@ const clientSchema = new mongoose.Schema({
   bloodGroup: { type: String, default: "" },
   address: { type: String, default: "" },
 
+  // 🟢 NEW: Personal Details
+  dateOfBirth: { type: Date, default: null },
+  stateOfDomicile: { type: String, default: "" },
+  admissionQuota: { type: String, default: "" },   // free-text, admin enters
+
+  // 🟢 NEW: Exam Scores
+  examScores: {
+    neet: { type: String, default: "" },
+    jee: { type: String, default: "" },
+    class12: { type: String, default: "" },
+    other: { type: String, default: "" }
+  },
+
   // 🟢 NEW: Social Category
   socialCategory: {
     type: String,

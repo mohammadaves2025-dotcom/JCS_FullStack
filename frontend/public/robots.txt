@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════
-# robots.txt — JCS Consultancy (jcsconsultancy.in)
+# robots.txt — JCS Consultancy (jamiaconsultancyservices.in)
 # ═══════════════════════════════════════════════════
 
 User-agent: *

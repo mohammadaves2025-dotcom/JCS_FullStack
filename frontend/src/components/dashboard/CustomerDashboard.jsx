@@ -64,6 +64,12 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
     const [editSocialCategory, setEditSocialCategory] = useState('');
     const [editAddress, setEditAddress] = useState('');
 
+    // New fields
+    const [editDOB, setEditDOB] = useState('');
+    const [editDomicile, setEditDomicile] = useState('');
+    const [editAdmissionQuota, setEditAdmissionQuota] = useState('');
+    const [editExamScores, setEditExamScores] = useState({ neet: '', jee: '', class12: '', other: '' });
+
     // Guardian States
     const [editGuardianName, setEditGuardianName] = useState('');
     const [editGuardianPhone, setEditGuardianPhone] = useState('');
@@ -91,6 +97,16 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
             setEditGuardianName(client.guardianDetails?.name || '');
             setEditGuardianPhone(client.guardianDetails?.phone || '');
             setEditGuardianEmail(client.guardianDetails?.email || '');
+            // New fields
+            setEditDOB(client.dateOfBirth ? client.dateOfBirth.slice(0, 10) : '');
+            setEditDomicile(client.stateOfDomicile || '');
+            setEditAdmissionQuota(client.admissionQuota || '');
+            setEditExamScores({
+                neet: client.examScores?.neet || '',
+                jee: client.examScores?.jee || '',
+                class12: client.examScores?.class12 || '',
+                other: client.examScores?.other || ''
+            });
         }
     }, [client]);
 
@@ -334,6 +350,70 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                                 </button>
                                             </div>
                                         </div>
+
+                                        {/* Date of Birth */}
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Date of Birth</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="date"
+                                                    value={editDOB}
+                                                    onChange={(e) => setEditDOB(e.target.value)}
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                />
+                                                <button
+                                                    onClick={() => saveClientDetails({ dateOfBirth: editDOB || null })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
+                                            </div>
+                                            {editDOB && (
+                                                <p className="text-[10px] text-gray-400 font-bold mt-1">
+                                                    Age: {Math.floor((new Date() - new Date(editDOB)) / (365.25 * 24 * 60 * 60 * 1000))} years
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* State of Domicile */}
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">State of Domicile</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={editDomicile}
+                                                    onChange={(e) => setEditDomicile(e.target.value)}
+                                                    placeholder="e.g. Delhi, UP, Bihar..."
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                />
+                                                <button
+                                                    onClick={() => saveClientDetails({ stateOfDomicile: editDomicile })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Admission Quota */}
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Admission Quota</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={editAdmissionQuota}
+                                                    onChange={(e) => setEditAdmissionQuota(e.target.value)}
+                                                    placeholder="e.g. Management Quota, NRI, Govt..."
+                                                    className="flex-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                />
+                                                <button
+                                                    onClick={() => saveClientDetails({ admissionQuota: editAdmissionQuota })}
+                                                    className="bg-gray-900 text-white px-4 rounded-xl font-bold hover:bg-jcs-brand transition-colors text-sm"
+                                                >
+                                                    Save
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -428,6 +508,38 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                                                 </button>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+
+                                {/* Exam Scores Card */}
+                                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                                        🎯 Exam Scores
+                                    </h3>
+                                    <div className="space-y-3">
+                                        {[
+                                            { key: 'neet', label: 'NEET Score / Rank', placeholder: 'e.g. 450 / Rank 85000' },
+                                            { key: 'jee', label: 'JEE Score / Percentile', placeholder: 'e.g. 78.5 percentile' },
+                                            { key: 'class12', label: '12th Board Marks', placeholder: 'e.g. 82% / 410/500' },
+                                            { key: 'other', label: 'Other Exam', placeholder: 'e.g. CUET 95 percentile' },
+                                        ].map(({ key, label, placeholder }) => (
+                                            <div key={key}>
+                                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">{label}</label>
+                                                <input
+                                                    type="text"
+                                                    value={editExamScores[key]}
+                                                    onChange={(e) => setEditExamScores({ ...editExamScores, [key]: e.target.value })}
+                                                    placeholder={placeholder}
+                                                    className="w-full p-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-sm focus:outline-none focus:border-jcs-brand"
+                                                />
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => saveClientDetails({ examScores: editExamScores })}
+                                            className="w-full bg-gray-900 text-white font-black py-3 rounded-xl hover:bg-jcs-brand transition-all text-sm shadow-md mt-2"
+                                        >
+                                            Save Exam Scores
+                                        </button>
                                     </div>
                                 </div>
 

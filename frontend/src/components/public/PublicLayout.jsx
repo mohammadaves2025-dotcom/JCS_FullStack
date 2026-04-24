@@ -7,7 +7,7 @@ import logo from '../../assets/JCS-LOGO1.jpeg';
 
 const PublicLayout = ({ children }) => {
     const [scrolled, setScrolled] = useState(false);
-    const { pathname } = useLocation(); 
+    const { pathname } = useLocation();
 
     // 🟢 1. Scroll to top instantly whenever the page/route changes
     useEffect(() => {
@@ -35,11 +35,11 @@ const PublicLayout = ({ children }) => {
                     {/* Logo Area */}
                     <NavLink to="/" className="flex items-center gap-2.5 md:gap-3 group cursor-pointer">
                         <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-jcs-deep to-[#13422E] rounded-lg md:rounded-xl flex items-center justify-center font-black text-white text-xs md:text-base shadow-lg group-hover:scale-105 transition-transform duration-300">
-                            <img 
-                        src={logo} 
-                        alt="JCS Logo" 
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300 bg-white"
-                    />
+                            <img
+                                src={logo}
+                                alt="JCS Logo"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl object-cover shadow-lg group-hover:scale-105 transition-transform duration-300 bg-white"
+                            />
                         </div>
                         <div className="flex flex-col justify-center">
                             <span className={`font-extrabold text-[13px] sm:text-[15px] md:text-[25px] leading-none tracking-tight transition-colors duration-300 ${isSolid ? 'text-gray-900' : 'text-white'}`}>
@@ -97,9 +97,9 @@ const PublicLayout = ({ children }) => {
             <footer className="bg-gray-50 border-t border-gray-200 pt-16 pb-8 mt-20">
                 <div className="max-w-7xl mx-auto px-4 md:px-8">
                     <div className="flex items-center gap-2 mb-4">
-                        <img 
-                            src={logo} 
-                            alt="JCS Logo" 
+                        <img
+                            src={logo}
+                            alt="JCS Logo"
                             className="w-8 h-8 rounded-lg object-cover bg-white shadow-sm"
                         />
                         <h3 className="text-xl font-black text-gray-900">Secure Your Future.</h3>
@@ -152,17 +152,17 @@ const PublicLayout = ({ children }) => {
 
                     {/* 🟢 New Instagram Integration */}
                     <div className="mb-10">
-                        <a 
-                            href="https://www.instagram.com/jcs.delhi/" 
-                            target="_blank" 
+                        <a
+                            href="https://www.instagram.com/jcs.delhi/"
+                            target="_blank"
                             rel="noreferrer"
                             className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-100 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-gray-700 hover:text-white rounded-xl transition-all duration-300 font-bold text-sm shadow-sm border border-gray-200 hover:border-transparent group"
                         >
-                            <FiInstagram size={18} className="group-hover:scale-110 transition-transform" /> 
+                            <FiInstagram size={18} className="group-hover:scale-110 transition-transform" />
                             Follow us @jcs.delhi
                         </a>
                     </div>
-                    
+
                     <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-gray-400">
                         <p>Copyright © 2026, Jamia Consultancy Services. All rights reserved.</p>
                         <div className="flex gap-6 items-center">

@@ -2,6 +2,45 @@ import Client from "../models/Client.js";
 import Inquiry from "../models/Inquiry.js";
 import College from "../models/College.js";
 
+// @desc    Create a client directly (walk-in / WhatsApp / offline)
+// @route   POST /api/clients
+// @access  Private (Super Admin)
+export const createClient = async (req, res) => {
+    const {
+        name, phone, email, targetCourse, targetColleges,
+        address, bloodGroup, socialCategory, guardianDetails,
+        dateOfBirth, stateOfDomicile, admissionQuota, examScores
+    } = req.body;
+
+    if (!name || !phone) {
+        return res.status(400).json({ message: "Name and phone are required." });
+    }
+
+    try {
+        const client = await Client.create({
+            name,
+            phone,
+            email: email || `${phone}@direct.jcs`,
+            targetCourse: targetCourse || "",
+            targetColleges: targetColleges || [],
+            address: address || "",
+            bloodGroup: bloodGroup || "",
+            socialCategory: socialCategory || "General",
+            guardianDetails: guardianDetails || {},
+            dateOfBirth: dateOfBirth || null,
+            stateOfDomicile: stateOfDomicile || "",
+            admissionQuota: admissionQuota || "",
+            examScores: examScores || {},
+            admissionStatus: "COLLEGE FORM APPLIED",
+            temperature: "INTERESTED",
+        });
+        res.status(201).json(client);
+    } catch (error) {
+        console.error("Error creating client:", error);
+        res.status(500).json({ message: "Server error creating client" });
+    }
+};
+
 // @desc    Get all converted clients
 // @route   GET /api/clients
 // @access  Private (Staff/Admin)
@@ -52,9 +91,13 @@ export const updateClient = async (req, res) => {
         bloodGroup,
         address,
         requiredDocuments,
-        socialCategory,        // 🟢 NEW
+        socialCategory,
         universityAccounts,
-        guardianDetails    // 🟢 NEW
+        guardianDetails,
+        dateOfBirth,           // 🟢 NEW
+        stateOfDomicile,       // 🟢 NEW
+        admissionQuota,        // 🟢 NEW
+        examScores,            // 🟢 NEW
     } = req.body;
 
     try {
@@ -73,6 +116,10 @@ export const updateClient = async (req, res) => {
         if (requiredDocuments) client.requiredDocuments = requiredDocuments;
         if (socialCategory !== undefined) client.socialCategory = socialCategory;  // 🟢 NEW
         if (universityAccounts !== undefined) client.universityAccounts = universityAccounts; // 🟢 NEW
+        if (dateOfBirth !== undefined) client.dateOfBirth = dateOfBirth;           // 🟢 NEW
+        if (stateOfDomicile !== undefined) client.stateOfDomicile = stateOfDomicile; // 🟢 NEW
+        if (admissionQuota !== undefined) client.admissionQuota = admissionQuota;  // 🟢 NEW
+        if (examScores !== undefined) client.examScores = { ...client.examScores, ...examScores }; // 🟢 NEW
 
 
         if (guardianDetails !== undefined) {

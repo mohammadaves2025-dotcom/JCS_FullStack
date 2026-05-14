@@ -1,37 +1,36 @@
-// A list of the most common temporary/disposable email domains
-const disposableDomains = [
-    "mailinator.com",
-    "10minutemail.com",
-    "tempmail.com",
-    "guerrillamail.com",
-    "yopmail.com",
-    "throwawaymail.com",
-    "temp-mail.org",
-    "fakemail.net",
-    "trashmail.com",
-    "sharklasers.com",
-    "maildrop.cc",
-    "dispostable.com"
-];
+import validator from "validator";
+import disposableDomains from "disposable-email-domains" with { type: "json" };
 
+// Build a Set for O(1) lookups across 10,000+ blocked domains
+const disposableSet = new Set(disposableDomains);
+
+/**
+ * Validates an email address for:
+ *  1. Correct format (RFC 5321 via validator.js)
+ *  2. Disposable / temporary domain (10,000+ blocked domains via disposable-email-domains)
+ *
+ * Returns { isValid: boolean, message?: string }
+ */
 export const isEmailValid = (email) => {
-    // 1. Basic Regex to ensure it actually looks like an email (contains @ and .)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return { isValid: false, message: "Please enter a valid email format." };
+    if (!email || typeof email !== "string") {
+        return { isValid: false, message: "Email address is required." };
     }
 
-    // 2. Extract the domain (e.g., "gmail.com" from "user@gmail.com")
-    const domain = email.split('@')[1].toLowerCase();
+    const trimmed = email.trim().toLowerCase();
 
-    // 3. Check if the domain is in our blocklist
-    if (disposableDomains.includes(domain)) {
+    // 1. RFC-compliant format check
+    if (!validator.isEmail(trimmed)) {
+        return { isValid: false, message: "Please enter a valid email address." };
+    }
+
+    // 2. Disposable / throwaway domain check (covers mailinator, tempmail, 10minutemail, etc.)
+    const domain = trimmed.split("@")[1];
+    if (disposableSet.has(domain)) {
         return {
             isValid: false,
-            message: "Temporary or disposable emails are not allowed. Please use your primary email."
+            message: "Temporary or disposable email addresses are not allowed. Please use your real email.",
         };
     }
 
-    // If it passes both tests, it's good to go!
     return { isValid: true };
 };

@@ -47,9 +47,9 @@ router.post("/", protect, upload.single("document"), async (req, res) => {
 // @desc    Delete a document from Cloudinary
 // @route   DELETE /api/upload/:public_id
 // @access  Private (Super Admin)
-router.delete("/:public_id(*)", protect, staffOnly, async (req, res) => {
+router.delete("/*public_id", protect, staffOnly, async (req, res) => {
     try {
-        const public_id = req.params.public_id;
+        const public_id = req.params.public_id || req.params[0];
         if (!public_id) {
             return res.status(400).json({ message: "No public_id provided" });
         }

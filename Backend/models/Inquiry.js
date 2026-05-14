@@ -4,7 +4,7 @@ const inquirySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     phone: { type: String, required: true },
-    email: { type: String, required: true, lowercase: true, trim: true },
+    email: { type: String, required: false, lowercase: true, trim: true },
 
     // 🟢 ADD THESE BACK: Missing fields causing the ReferenceError
     interestedCourse: { type: String, required: true },

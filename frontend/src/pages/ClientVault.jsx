@@ -303,7 +303,6 @@ const ClientVault = () => {
                                 )}
                                 <div className="min-w-0">
                                     <h3 className="text-lg font-black text-gray-900 group-hover:text-jcs-deep transition-colors tracking-tight truncate">{client.name}</h3>
-                                    <p className="text-xs text-gray-400 font-bold">{client.phone}</p>
 
                                     <div className="flex items-center gap-2 mt-0.5">
                                         <p className="text-xs text-gray-500 font-bold">{client.phone}</p>

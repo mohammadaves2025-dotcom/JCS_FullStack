@@ -39,10 +39,28 @@ const FloatingLeadForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const validatePhone = (phone) => {
+        const cleaned = phone.trim().replace(/[\s\-().]/g, "");
+        // Must have 7-15 digits after stripping formatting chars
+        const digitsOnly = cleaned.replace(/\D/g, "");
+        if (digitsOnly.length < 7 || digitsOnly.length > 15) return false;
+        // Reject all-same-digit or sequential patterns
+        if (/^(\d)\1+$/.test(digitsOnly)) return false;
+        if ("0123456789".includes(digitsOnly) || "9876543210".includes(digitsOnly)) return false;
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setError('');
+
+        // Client-side phone check before hitting the server
+        if (!validatePhone(formData.phone)) {
+            setError('Please enter a valid phone number (e.g. +91 98765 43210).');
+            setIsSubmitting(false);
+            return;
+        }
         try {
             await axios.post(`${backendURL}/api/inquiries`, {
                 ...formData,

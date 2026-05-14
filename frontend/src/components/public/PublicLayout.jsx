@@ -26,7 +26,7 @@ const PublicLayout = ({ children }) => {
     const isSolid = scrolled || forceSolidNav;
 
     return (
-        <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-jcs-brand selection:text-white pb-20 md:pb-0 flex flex-col">
+        <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-jcs-brand selection:text-white flex flex-col">
 
             {/* 🟢 Premium Animated Navbar */}
             <nav className={`fixed w-full top-0 z-50 transition-all duration-500 py-3 md:py-3 ${isSolid ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-gray-100' : 'bg-transparent'}`}>
@@ -74,12 +74,6 @@ const PublicLayout = ({ children }) => {
                             Blog
                         </NavLink>
 
-                        <NavLink
-                            to="/login"
-                            className={`text-xs sm:text-sm md:text-sm font-bold transition-colors ${isSolid ? 'text-gray-500 hover:text-gray-900' : 'text-white/90 hover:text-white'}`}
-                        >
-                            Login
-                        </NavLink>
 
                         <a href="tel:+919990922119" className={`hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full font-bold transition-all duration-300 ${isSolid ? 'bg-jcs-deep text-white shadow-md hover:bg-gray-900' : 'bg-white/20 text-white backdrop-blur-md border border-white/30 hover:bg-white hover:text-jcs-deep'}`}>
                             <FiPhone size={16} /> Call us 9990922119

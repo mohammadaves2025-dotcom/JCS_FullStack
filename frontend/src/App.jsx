@@ -23,6 +23,7 @@ import Transactions from './pages/Transactions';
 import Terms from './pages/Terms';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import JamiaHamdardPage from './pages/JamiaHamdardPage';
+import FloatingLeadForm from './components/FloatingLeadForm';
 
 // 🟢 SEO Service Pages
 import MBBSAdmissionPage from './pages/seo-pages/MBBSAdmissionPage';
@@ -43,6 +44,7 @@ function App() {
   return (
     <AuthProvider>
       <LeadProvider>
+        <FloatingLeadForm />
         <Routes>
           {/* ══════════ PUBLIC ROUTES ══════════ */}
           <Route path="/" element={<LandingPage />} />

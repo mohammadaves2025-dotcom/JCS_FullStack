@@ -623,20 +623,71 @@ const CustomerDashboard = ({ client, onClose, refreshClients }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 {client.documents?.map((doc, idx) => (
                                     <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-green-100 bg-green-50/50 hover:bg-green-50 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center shrink-0">
                                                 <FiCheckCircle size={18} />
                                             </div>
-                                            <span className="font-bold text-sm text-gray-900 truncate max-w-[140px]">{doc.docType}</span>
+                                            <span className="font-bold text-sm text-gray-900 truncate max-w-[120px]">{doc.docType}</span>
                                         </div>
-                                        <a
-                                            href={doc.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-white px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-50 transition-colors flex items-center gap-1.5"
-                                        >
-                                            Open <FiExternalLink size={12} />
-                                        </a>
+                                        <div className="flex items-center gap-1.5 shrink-0">
+                                            <a
+                                                href={doc.url}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-white px-2.5 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-50 transition-colors flex items-center gap-1"
+                                            >
+                                                Open <FiExternalLink size={11} />
+                                            </a>
+                                            {/* Re-upload button */}
+                                            <label
+                                                title="Replace document"
+                                                className="cursor-pointer text-[10px] font-black uppercase tracking-wider px-2.5 py-1.5 rounded-lg bg-white border border-amber-200 text-amber-600 hover:bg-amber-50 transition-colors flex items-center gap-1"
+                                            >
+                                                <FiUploadCloud size={11} /> Replace
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf, image/*"
+                                                    className="hidden"
+                                                    disabled={uploadingDoc}
+                                                    onChange={async (e) => {
+                                                        const file = e.target.files[0];
+                                                        if (!file) return;
+                                                        // Delete old from Cloudinary first (best-effort)
+                                                        if (doc.public_id) {
+                                                            try {
+                                                                await axios.delete(`/api/upload/${encodeURIComponent(doc.public_id)}`, { withCredentials: true });
+                                                            } catch (_) { /* non-fatal */ }
+                                                        }
+                                                        // Remove old doc from list then re-upload with same name
+                                                        const withoutOld = (client.documents || []).filter((_, i) => i !== idx);
+                                                        await saveClientDetails({ documents: withoutOld }, true);
+                                                        // Trigger the normal upload flow with the same docType
+                                                        const syntheticEvent = { target: { files: [file] } };
+                                                        handleFileUpload(syntheticEvent, doc.docType);
+                                                    }}
+                                                />
+                                            </label>
+                                            {/* Delete button */}
+                                            <button
+                                                title="Delete document"
+                                                disabled={uploadingDoc}
+                                                onClick={async () => {
+                                                    if (!window.confirm(`Delete "${doc.docType}"? This cannot be undone.`)) return;
+                                                    // Delete from Cloudinary
+                                                    if (doc.public_id) {
+                                                        try {
+                                                            await axios.delete(`/api/upload/${encodeURIComponent(doc.public_id)}`, { withCredentials: true });
+                                                        } catch (_) { /* non-fatal – still remove from DB */ }
+                                                    }
+                                                    // Remove from client record
+                                                    const updated = (client.documents || []).filter((_, i) => i !== idx);
+                                                    await saveClientDetails({ documents: updated }, true);
+                                                }}
+                                                className="w-8 h-8 rounded-lg bg-white border border-red-100 text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors disabled:opacity-40"
+                                            >
+                                                <FiTrash2 size={13} />
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                                 {['10th Marksheet', '12th Marksheet', 'Aadhar Card', 'Passport Photo']

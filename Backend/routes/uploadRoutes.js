@@ -44,4 +44,26 @@ router.post("/", protect, upload.single("document"), async (req, res) => {
     }
 });
 
+// @desc    Delete a document from Cloudinary
+// @route   DELETE /api/upload/:public_id
+// @access  Private (Super Admin)
+router.delete("/:public_id(*)", protect, staffOnly, async (req, res) => {
+    try {
+        const public_id = req.params.public_id;
+        if (!public_id) {
+            return res.status(400).json({ message: "No public_id provided" });
+        }
+        // Try as raw/auto first (PDFs are uploaded as resource_type: auto)
+        const result = await cloudinary.uploader.destroy(public_id, { resource_type: "raw" });
+        if (result.result !== "ok") {
+            // Fallback — might be an image
+            await cloudinary.uploader.destroy(public_id, { resource_type: "image" });
+        }
+        res.status(200).json({ message: "Document deleted from cloud storage" });
+    } catch (error) {
+        console.error("Delete Error:", error);
+        res.status(500).json({ message: "Failed to delete document", error: error.message });
+    }
+});
+
 export default router;

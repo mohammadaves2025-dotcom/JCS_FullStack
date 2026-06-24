@@ -193,6 +193,24 @@ const LeadPipeline = () => {
                                 <div className="flex flex-wrap items-center gap-5 text-sm font-medium text-gray-500">
                                     <span className="flex items-center gap-2"><FiBookOpen className="text-gray-400" /> {lead.interestedCourse}</span>
                                     <span className="flex items-center gap-2"><FiMapPin className="text-gray-400" /> {lead.preferredCity}</span>
+
+                                    {/* Phone — selectable so client can copy-paste */}
+                                    <span
+                                        className="flex items-center gap-2 font-mono font-bold text-gray-700 select-all cursor-text"
+                                        onClick={(e) => e.stopPropagation()}
+                                        title="Click to select number"
+                                    >
+                                        <FiPhone className="text-gray-400" /> {lead.phone}
+                                    </span>
+
+                                    {/* Submission timestamp */}
+                                    <span className="flex items-center gap-2 text-xs text-gray-400">
+                                        <FiClock className="text-gray-400" />
+                                        {new Date(lead.createdAt).toLocaleString('en-IN', {
+                                            day: 'numeric', month: 'short', year: 'numeric',
+                                            hour: '2-digit', minute: '2-digit', hour12: true
+                                        })}
+                                    </span>
                                 </div>
                             </div>
 

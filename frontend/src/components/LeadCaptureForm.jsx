@@ -42,17 +42,14 @@ const LeadCaptureForm = () => {
         }
 
         try {
-            // This hits the backend route we built for the Lead Pipeline
             await axios.post(`${backendURL}/api/inquiries`, {
                 ...formData,
-                source: 'Website Form' // Automatically tags the lead source
+                source: 'Website Form'
             });
 
             setIsSuccess(true);
             setFormData({ name: '', phone: '', email: '', interestedCourse: '', preferredCity: '' });
-
-            // Reset success message after 5 seconds
-            setTimeout(() => setIsSuccess(false), 5000);
+            // No auto-reset — success state persists until page reload
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong. Please try again.');
         } finally {
@@ -113,120 +110,156 @@ const LeadCaptureForm = () => {
                     </div>
                 </div>
 
-                {/* 🟢 RIGHT SIDE: The High-Converting Form */}
-                <div className="lg:w-7/12 p-10 md:p-14 bg-gray-50/50">
-                    <div className="mb-8">
-                        <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Request a Free Consultation</h3>
-                        <p className="text-gray-500 font-medium text-sm">Drop your details below and our expert counselors will reach out within 24 hours.</p>
-                    </div>
+                {/* 🟢 RIGHT SIDE: Form / Success State */}
+                <div className="lg:w-7/12 p-10 md:p-14 bg-gray-50/50 flex flex-col justify-center">
 
                     {isSuccess ? (
-                        <div className="bg-green-50 border border-green-200 rounded-3xl p-8 text-center animate-fade-in-up h-full flex flex-col justify-center items-center">
-                            <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6 mx-auto">
-                                <FiCheckCircle size={40} />
+                        <div className="flex flex-col items-center justify-center py-8 text-center animate-fade-in-up">
+                            {/* Pulsing checkmark */}
+                            <div className="relative w-28 h-28 mb-8 mx-auto">
+                                <div className="absolute inset-0 rounded-full bg-green-100 animate-ping opacity-25"></div>
+                                <div className="relative w-28 h-28 bg-green-100 rounded-full flex items-center justify-center shadow-inner">
+                                    <FiCheckCircle size={52} className="text-green-500" />
+                                </div>
                             </div>
-                            <h3 className="text-2xl font-black text-gray-900 mb-2">Request Received!</h3>
-                            <p className="text-green-800 font-medium">Your inquiry has been securely routed to our team. We will contact you shortly.</p>
+
+                            <span className="text-[10px] font-black uppercase tracking-widest text-green-700 bg-green-50 px-4 py-1.5 rounded-full border border-green-100 mb-5 inline-block">
+                                Submitted Successfully
+                            </span>
+
+                            <h3 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">
+                                We've Got Your Request!
+                            </h3>
+                            <p className="text-gray-500 font-medium text-sm max-w-xs mx-auto leading-relaxed">
+                                Our expert counselor will call you back within{' '}
+                                <strong className="text-gray-900">24 hours</strong>.
+                                Keep your phone nearby.
+                            </p>
+
+                            <div className="mt-10 w-full max-w-xs bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-left space-y-3">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">What happens next?</p>
+                                {[
+                                    { step: '01', text: 'Our counselor reviews your request' },
+                                    { step: '02', text: 'You receive a call within 24 hours' },
+                                    { step: '03', text: 'We shortlist colleges matching your profile' },
+                                ].map(({ step, text }) => (
+                                    <div key={step} className="flex items-center gap-3">
+                                        <span className="w-7 h-7 rounded-full bg-jcs-brand/10 text-jcs-brand text-[10px] font-black flex items-center justify-center shrink-0">{step}</span>
+                                        <span className="text-sm font-medium text-gray-600">{text}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="mt-8 flex items-center gap-2 text-xs text-gray-400 font-bold">
+                                <FiShield className="text-green-400" /> Your information is 100% secure · No Spam
+                            </div>
                         </div>
                     ) : (
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {error && (
-                                <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100">
-                                    {error}
-                                </div>
-                            )}
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
-                                    <div className="relative">
-                                        <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                        <input
-                                            type="text" name="name" required value={formData.name} onChange={handleChange}
-                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm"
-                                            placeholder="John Doe"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
-                                    <div className="relative">
-                                        <FiPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                        <input
-                                            type="tel" name="phone" required value={formData.phone} onChange={handleChange}
-                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm"
-                                            placeholder="+91 98765 43210"
-                                        />
-                                    </div>
-                                </div>
+                        <>
+                            <div className="mb-8">
+                                <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">Request a Free Consultation</h3>
+                                <p className="text-gray-500 font-medium text-sm">Drop your details below and our expert counselors will reach out within 24 hours.</p>
                             </div>
 
-                            <div>
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Email Address (Optional)</label>
-                                <div className="relative">
-                                    <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                                    <input
-                                        type="email" name="email" value={formData.email} onChange={handleChange}
-                                        className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm"
-                                        placeholder="john@example.com"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Interested Course</label>
-                                    <div className="relative">
-                                        <FiBookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
-                                        <select
-                                            name="interestedCourse" required value={formData.interestedCourse} onChange={handleChange}
-                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm appearance-none cursor-pointer relative"
-                                        >
-                                            <option value="" disabled>Select a course</option>
-                                            <option value="B.Tech">B.Tech (Engineering)</option>
-                                            <option value="MBBS">MBBS (Medical)</option>
-                                            <option value="BDS">BDS (Dental)</option>
-                                            <option value="BBA">BBA / MBA</option>
-                                            <option value="Law">Law (BA LLB)</option>
-                                            <option value="Other">Other</option>
-                                        </select>
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                {error && (
+                                    <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100">
+                                        {error}
                                     </div>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Preferred Location</label>
-                                    <div className="relative">
-                                        <FiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
-                                        <select
-                                            name="preferredCity" required value={formData.preferredCity} onChange={handleChange}
-                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm appearance-none cursor-pointer relative"
-                                        >
-                                            <option value="" disabled>Select a region</option>
-                                            <option value="Delhi NCR">Delhi NCR</option>
-                                            <option value="Bangalore">Bangalore</option>
-                                            <option value="Pune">Pune</option>
-                                            <option value="Mumbai">Mumbai</option>
-                                            <option value="Anywhere in India">Anywhere in India</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className={`w-full bg-gray-900 text-white font-extrabold py-5 rounded-2xl shadow-lg hover:bg-jcs-deep hover:-translate-y-0.5 transition-all mt-4 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
-                            >
-                                {isSubmitting ? (
-                                    <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Processing...</>
-                                ) : (
-                                    <>Request Call Back <FiArrowRight /></>
                                 )}
-                            </button>
 
-                            <p className="text-center text-xs text-gray-400 font-bold mt-4 flex items-center justify-center gap-1">
-                                <FiShield /> Your information is 100% secure.
-                            </p>
-                        </form>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
+                                        <div className="relative">
+                                            <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                            <input
+                                                type="text" name="name" required value={formData.name} onChange={handleChange}
+                                                className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm"
+                                                placeholder="John Doe"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
+                                        <div className="relative">
+                                            <FiPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                            <input
+                                                type="tel" name="phone" required value={formData.phone} onChange={handleChange}
+                                                className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm"
+                                                placeholder="+91 98765 43210"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Email Address (Optional)</label>
+                                    <div className="relative">
+                                        <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                                        <input
+                                            type="email" name="email" value={formData.email} onChange={handleChange}
+                                            className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm"
+                                            placeholder="john@example.com"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Interested Course</label>
+                                        <div className="relative">
+                                            <FiBookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
+                                            <select
+                                                name="interestedCourse" required value={formData.interestedCourse} onChange={handleChange}
+                                                className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm appearance-none cursor-pointer"
+                                            >
+                                                <option value="" disabled>Select a course</option>
+                                                <option value="B.Tech">B.Tech (Engineering)</option>
+                                                <option value="MBBS">MBBS (Medical)</option>
+                                                <option value="BDS">BDS (Dental)</option>
+                                                <option value="BBA">BBA / MBA</option>
+                                                <option value="Law">Law (BA LLB)</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Preferred Location</label>
+                                        <div className="relative">
+                                            <FiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
+                                            <select
+                                                name="preferredCity" required value={formData.preferredCity} onChange={handleChange}
+                                                className="w-full pl-11 pr-4 py-4 rounded-2xl bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-jcs-brand/20 focus:border-jcs-brand transition-all text-gray-900 font-bold text-sm appearance-none cursor-pointer"
+                                            >
+                                                <option value="" disabled>Select a region</option>
+                                                <option value="Delhi NCR">Delhi NCR</option>
+                                                <option value="Bangalore">Bangalore</option>
+                                                <option value="Pune">Pune</option>
+                                                <option value="Mumbai">Mumbai</option>
+                                                <option value="Anywhere in India">Anywhere in India</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`w-full bg-gray-900 text-white font-extrabold py-5 rounded-2xl shadow-lg hover:bg-jcs-deep hover:-translate-y-0.5 transition-all mt-4 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                >
+                                    {isSubmitting ? (
+                                        <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Processing...</>
+                                    ) : (
+                                        <>Request Call Back <FiArrowRight /></>
+                                    )}
+                                </button>
+
+                                <p className="text-center text-xs text-gray-400 font-bold mt-4 flex items-center justify-center gap-1">
+                                    <FiShield /> Your information is 100% secure.
+                                </p>
+                            </form>
+                        </>
                     )}
                 </div>
             </div>

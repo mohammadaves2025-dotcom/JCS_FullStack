@@ -16,8 +16,7 @@ const Universities = () => {
                 {/* Tabs */}
                 <div className="flex gap-8 border-b border-gray-200 mb-12 overflow-x-auto hide-scrollbar">
                     <button className="pb-4 border-b-2 border-blue-600 text-blue-600 font-bold text-lg whitespace-nowrap px-2">Delhi NCR</button>
-                    <button className="pb-4 border-b-2 border-transparent text-gray-500 hover:text-blue-600 font-bold text-lg whitespace-nowrap px-2 transition-colors">Pune</button>
-                    <button className="pb-4 border-b-2 border-transparent text-gray-500 hover:text-blue-600 font-bold text-lg whitespace-nowrap px-2 transition-colors">Bangalore</button>
+                    
                 </div>
 
                 {/* Grid */}

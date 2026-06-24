@@ -15,7 +15,6 @@ const Hero = () => {
             await axios.post(`${backendURL}/api/inquiries/`, { ...formData, source: 'Website Form' });
             setStatus({ loading: false, success: true, error: '' });
             setFormData({ name: '', email: '', phone: '', preferredCity: '', interestedCourse: '' });
-            setTimeout(() => setStatus(s => ({ ...s, success: false })), 5000);
         } catch (err) {
             setStatus({ loading: false, success: false, error: err.response?.data?.message || 'Something went wrong.' });
         }
